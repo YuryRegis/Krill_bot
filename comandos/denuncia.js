@@ -48,7 +48,7 @@ exports.run = async (client, message, args) => {
                     // console.log(coletado.first().attachments.first())
                     let resposta = await coletado.first().attachments.first(),
                         content  = await coletado.first().content,
-                        mensagem = `<@&697930725529485362> <@&607754714100269056> <@&607776618064248843> temos uma denúncia anônima.`;
+                        mensagem = `<@${getID.cargo.MODERADOR}> <@${getID.cargo.STAFF}> <@${getID.cargo.ADMIN}> temos uma denúncia anônima.`;
                     
                     if(resposta !== undefined)
                         resposta = resposta.proxyURL;
