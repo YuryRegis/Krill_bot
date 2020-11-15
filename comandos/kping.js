@@ -7,6 +7,6 @@
     }
 
     exports.help = {
-        name: "ping"
+        name: "kping"
     }
     
