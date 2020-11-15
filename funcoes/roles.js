@@ -1,3 +1,4 @@
+const getID = require('../funcoes/ids.json');
 
 module.exports = {
 
@@ -6,10 +7,10 @@ module.exports = {
         let servidor = await client.guilds.cache.get(servidorID);
         let membro   = await servidor.members.cache.get(data.d.user_id);
 
-        let android = await servidor.roles.cache.get('627270660271374387'),
-            apple   = await servidor.roles.cache.get('627275771710406673'),
-            beta    = await servidor.roles.cache.get('627273901197492244'),
-            skyG    = await servidor.roles.cache.get('653331984420175903');
+        let android = await servidor.roles.cache.get(getID.cargo.ANDROID),
+            apple   = await servidor.roles.cache.get(getID.cargo.APPLE),
+            beta    = await servidor.roles.cache.get(getID.cargo.BETA),
+            skyG    = await servidor.roles.cache.get(getID.cargo.GLOBAL);
 
         if(data.t === "MESSAGE_REACTION_ADD" || data.t === "MESSAGE_REACTION_REMOVE") {
             if(data.d.emoji.id === "698184753848778883") { 
@@ -36,7 +37,7 @@ module.exports = {
     verificaRole: async function(member, role) {
         const roles = await member.roles.cache;
         
-        if(roles.some(r => r.name === role))
+        if(roles.some(r => r.name === role || r.id === role))
             return true;
         else
             return false;

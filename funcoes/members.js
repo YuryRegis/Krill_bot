@@ -1,11 +1,14 @@
-const { verificaRole } = require('../funcoes/roles');
+const { verificaRole } = require('../funcoes/roles'),
+      getID            = require('../funcoes/ids.json');
 
 
 module.exports = {
 
     verificaPerm: function(member) {
         
-        if(verificaRole(member, "Admin") || verificaRole(member, "Staff") || verificaRole(member, "Moderador"))
+        if( verificaRole(member, getID.cargo.ADMIN) || 
+            verificaRole(member, getID.cargo.STAFF) ||
+            verificaRole(member, getID.cargo.MODERADOR) )
              return true;
         else
             return false;
