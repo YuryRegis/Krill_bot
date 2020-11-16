@@ -4,9 +4,10 @@ const Discord = require("discord.js");
 const client = new Discord.Client();
 const getID = require('./funcoes/ids.json');
 const config = require("./config.json");
+const { verificaRoles } = require('./funcoes/roles');
 const messageHandler = require("./messageHandler.cjs");
 const { setRole, rmvAddLog, mbrUPD, prsUPD } = require("./funcoes/funcoes");
-const { get } = require("request-promise-native");
+
 
 
 client.commands = new Discord.Collection(); //Cria coleção de comandos
@@ -80,10 +81,9 @@ client.on("message", async message => {
 	let bemVindo = getID.sala.BEMVINDO;
 	    
 	if (message.channel.id === bemVindo) { 
-		let verificaRoles = await message.member.roles.some(r => 
-			r.name === "Android" || r.name === "Beta" || r.name === "Global" || r.name === "Apple"
-		);
-		if(!verificaRoles) {
+		let mbr = message.member;
+		let verificacao = await (verificaRoles(mbr, [getID.cargo.ANDROID, getID.cargo.APPLE, getID.cargo.BETA, getID.cargo.GLOBAL]));
+		if(!verificacao) {
 			let salaRegras = await message.guild.channels.cache.get(getID.sala.REGRAS);
 			
 			message.reply(`para ter acesso ao servidor, você precisa **aceitar** nossos termos e ${salaRegras}.`,
