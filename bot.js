@@ -2,9 +2,11 @@ const queue = new Map();
 const fs = require("fs");
 const Discord = require("discord.js");
 const client = new Discord.Client();
+const getID = require('./funcoes/ids.json');
 const config = require("./config.json");
 const messageHandler = require("./messageHandler.cjs");
 const { setRole, rmvAddLog, mbrUPD, prsUPD } = require("./funcoes/funcoes");
+const { get } = require("request-promise-native");
 
 
 client.commands = new Discord.Collection(); //Cria coleção de comandos
@@ -40,8 +42,8 @@ client.on("guildDelete", guild => {
 
 
 client.on("raw", async data => {
-	let regrasID   = "603731841584988180",
-	    servidorID = "603720312911167622";
+	let regrasID   = getID.sala.REGRAS,
+	    servidorID = getID.SERVIDOR;
 
 	if(data.t === "MESSAGE_REACTION_ADD" || data.t === "MESSAGE_REACTION_REMOVE") {
 		if(data.d.message_id !== regrasID) return
@@ -49,7 +51,7 @@ client.on("raw", async data => {
 		return;
 	}
 
-	let salaLogs = await client.channels.cache.get('698758957845446657');
+	let salaLogs = await client.channels.cache.get(getID.sala.LOGS);
 	
 	if(data.t === 'GUILD_MEMBER_REMOVE' || data.t === 'GUILD_MEMBER_ADD') {
 		let resposta = "";
@@ -75,14 +77,14 @@ client.on("raw", async data => {
 
 
 client.on("message", async message => {
-	let bemVindo = "603720312919556239";
+	let bemVindo = getID.sala.BEMVINDO;
 	    
 	if (message.channel.id === bemVindo) { 
 		let verificaRoles = await message.member.roles.some(r => 
 			r.name === "Android" || r.name === "Beta" || r.name === "Global" || r.name === "Apple"
 		);
 		if(!verificaRoles) {
-			let salaRegras = await message.guild.channels.cache.get("603728556262031365");
+			let salaRegras = await message.guild.channels.cache.get(getID.sala.REGRAS);
 			
 			message.reply(`para ter acesso ao servidor, você precisa **aceitar** nossos termos e ${salaRegras}.`,
 				{ file:"https://i.ibb.co/GVwYx24/regras.png" });
