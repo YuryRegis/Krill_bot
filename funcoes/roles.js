@@ -43,4 +43,15 @@ module.exports = {
             return false;
     }
 
+    // Verifica se membro possui uma role a partir de uma lista de roles
+    verificaRole: async function(member, roles: Array) {
+        const mbrRoles = await member.roles.cache;
+
+        for (role in roles) {
+            if (mbrRoles.some(r => r.name === role || r.id === role))
+                return true;
+        }
+        return false;
+    }
+
 }
