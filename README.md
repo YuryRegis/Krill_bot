@@ -22,6 +22,7 @@ COMANDO                 | USO                               | EXEMPLO
 
 
 <a id="banir"/> 
+
 ## Banir
 Este comando tem como função, banir membros do servidor. Membros banidos não poderão retornar desde que um Administrador do servidor intervenha.
 <p align="center">
@@ -41,6 +42,7 @@ Este comando tem como função, banir membros do servidor. Membros banidos não 
 
 
 <a id="del"/> 
+
 ## Deletar mensagens
 Este comando pode deletar a última mensagem enviada em uma sala de chat ou você pode especificar uma quantidade de mensagens a serem deletadas.
 OBS:. O @Krill não pode deletar mensagens mais antigas do que 14 dias.
@@ -59,6 +61,7 @@ OBS:. O @Krill não pode deletar mensagens mais antigas do que 14 dias.
 
 
 <a id="denuncia"/> 
+
 ## Denunciar
 Este comando cria uma sala privada em que apenas você e o bot possuem permissão para visualiza-la. Após você escrever sua denúncia, o @krill irá encaminhar sua mensagem **anonimamente** para a administração do servidor.
 <p align="center">
@@ -76,6 +79,7 @@ Qualquer membro pode usar este comando.
 
 
 <a id="enviarmsg"/> 
+
 ## Enviar mensagem 
 Este comando permite enviar uma mensagem usando o bot. Ao usar este comando, uma sala sera criada para que você possa fornecer todos os dados que o @Krill precisa para que sua mensagem seja editada com perfeição, tais como: Sala destinada, menções, título da mensagem, thumbnail, imagem, etc.
 
@@ -93,6 +97,7 @@ Este comando permite enviar uma mensagem usando o bot. Ao usar este comando, uma
 
 
 <a id="enviarpv"/> 
+
 ## Enviar mensagem privada para membro
 Este comando permite enviar uma mensagem privada usando o bot. Ao usar este comando, o @Krill fica encarregado de enviar uma mensagem para o membro mencionado.
 OBS:. Se o membro não permitir mensagens privadas uma mensagem de erro será enviada à sala de Logs.
@@ -110,7 +115,8 @@ OBS:. Se o membro não permitir mensagens privadas uma mensagem de erro será en
 ```
 
 
-<a id="kping"/> 
+<a id="kping"/>
+
 ## Ping - Testando tempo de resposta do @KRILL`bot`
 Como o esperado, retorna o tempo de resposta do bot (em ms).
 
@@ -124,6 +130,7 @@ Como o esperado, retorna o tempo de resposta do bot (em ms).
 
 
 <a id="mutar"/>
+
 ## Mutar / Desmutar membro do servidor
 Este comando irá impedir que o membro-alvo fique impossibilitado de enviar mensagens no servidor com excessão ao canal dedicado à trativa de problemas.
 O membro-alvo perderá todos os seus cargos e tags. Use este comando com moderação e sabedoria.
@@ -150,6 +157,7 @@ Desmutar o membro-alvo retira o cargo `Silenciado` do mesmo. Lembre-se de atribu
 
 
 <a id="privado" />
+
 ## Privado - Criar sala privada
 Este comando cria uma sala de chat privada, exclusiva, com os administradores do servidor. 
 Administradores podem usar o comando `!add` para adicionar pessoas à sala privada criada.
