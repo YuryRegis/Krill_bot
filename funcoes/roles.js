@@ -15,19 +15,19 @@ module.exports = {
         if(data.t === "MESSAGE_REACTION_ADD" || data.t === "MESSAGE_REACTION_REMOVE") {
             if(data.d.emoji.id === "698184753848778883") { 
                 if(membro.roles.cache.has(android)) return
-                (data.t === "MESSAGE_REACTION_ADD") ? membro.addRole(android) : membro.removeRole(android);
+                (data.t === "MESSAGE_REACTION_ADD") ? membro.roles.add(android) : membro.roles.remove(android);
             } 
             else if(data.d.emoji.id === "698184635724857445") {
                 if(membro.roles.cache.has(apple)) return
-                (data.t === "MESSAGE_REACTION_ADD") ? membro.addRole(apple) : membro.removeRole(apple);
+                (data.t === "MESSAGE_REACTION_ADD") ? membro.roles.add(apple) : membro.roles.remove(apple);
             }
             else if(data.d.emoji.name === "🛠️") {
                 if(membro.roles.cache.has(beta)) return
-                (data.t === "MESSAGE_REACTION_ADD") ? membro.addRole(beta) : membro.removeRole(beta);
+                (data.t === "MESSAGE_REACTION_ADD") ? membro.roles.add(beta) : membro.roles.remove(beta);
             }
             else if(data.d.emoji.name === "🌐") {
                 if(membro.roles.cache.has(skyG)) return
-                (data.t === "MESSAGE_REACTION_ADD") ? membro.addRole(skyG) : membro.removeRole(skyG);
+                (data.t === "MESSAGE_REACTION_ADD") ? membro.roles.add(skyG) : membro.roles.remove(skyG);
             }
         }
     },
