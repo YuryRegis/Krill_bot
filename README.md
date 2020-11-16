@@ -1,6 +1,7 @@
 <p align="center">
   <img src="https://i.ibb.co/41hYqVz/Krill-Logo.png  alt="drawing" width:"150";>
 </p>
+                                                                              
 # KRILL - Discord bot
 *@Krill* é um bot exclusivo do servidor [ThatSkyGameBrasil](https://is.gd/ThatSkyGameBrasil), no Discord. Este servidor foi criado com o objetivo de ajudar jogadores, falantes de português, de *Sky - Children of Light*, da empresa *ThatGameCompany*.
                                                                               
@@ -71,10 +72,6 @@ Este comando permite enviar uma mensagem usando o bot. Ao usar este comando, uma
 ## Enviar mensagem privada para membro
 Este comando permite enviar uma mensagem privada usando o bot. Ao usar este comando, o @Krill fica encarregado de enviar uma mensagem para o membro mencionado.
 OBS:. Se o membro não permitir mensagens privadas uma mensagem de erro será enviada à sala de Logs.
-
-<p align="center">
-  <img src="https://i.ibb.co/16b1XKz/enviarmsg.png" width:"150";>
-</p>
 
 ### Previlégios
 @Admin @Staff @Moderador
