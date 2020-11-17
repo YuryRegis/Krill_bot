@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://i.ibb.co/41hYqVz/Krill-Logo.png  alt="drawing" width:"150";>
+  <img src="https://i.ibb.co/41hYqVz/Krill-Logo.png  alt="drawing" width="300";>
 </p>
                                                                               
 # KRILL - Discord bot
@@ -26,7 +26,7 @@ COMANDO                 | USO                               | EXEMPLO
 ## Banir
 Este comando tem como função, banir membros do servidor. Membros banidos não poderão retornar desde que um Administrador do servidor intervenha.
 <p align="center">
-  <img src="https://media1.tenor.com/images/7129d4fbd2bd63ab987a768951ff44cb/tenor.gif" width:"150";>
+  <img src="https://media1.tenor.com/images/7129d4fbd2bd63ab987a768951ff44cb/tenor.gif" width="500";>
 </p>
 
 ### Previlégios
@@ -65,7 +65,7 @@ OBS:. O @Krill não pode deletar mensagens mais antigas do que 14 dias.
 ## Denunciar
 Este comando cria uma sala privada em que apenas você e o bot possuem permissão para visualiza-la. Após você escrever sua denúncia, o @krill irá encaminhar sua mensagem **anonimamente** para a administração do servidor.
 <p align="center">
-  <img src="https://i.ibb.co/NmxFfSW/denuncia.png" width:"150";>
+  <img src="https://i.ibb.co/NmxFfSW/denuncia.png" width="500";>
 </p>
 
 ### Previlégios
@@ -84,7 +84,7 @@ Qualquer membro pode usar este comando.
 Este comando permite enviar uma mensagem usando o bot. Ao usar este comando, uma sala sera criada para que você possa fornecer todos os dados que o @Krill precisa para que sua mensagem seja editada com perfeição, tais como: Sala destinada, menções, título da mensagem, thumbnail, imagem, etc.
 
 <p align="center">
-  <img src="https://i.ibb.co/16b1XKz/enviarmsg.png" width:"150";>
+  <img src="https://i.ibb.co/16b1XKz/enviarmsg.png" width="500";>
 </p>
 
 ### Previlégios
