@@ -46,7 +46,7 @@ module.exports = {
             if (state === undefined) return null;
             if(regex.test(state.toLowerCase())) {
                 let alvoID   = data.d.user.id,
-                    alvo     = await client.users.get(data.d.user.id),
+                    alvo     = await client.users.cache.get(data.d.user.id),
                     palavrao = await regex.exec(state.toLowerCase())[0],
                     msg      = `Pessoal, encontrei uma ** *RichPresence* **suspeita, poderiam verificar?\n`,
                     terminal = msg + `\`\`\`Membro:   ${alvo.tag}\nNome:     ${alvo.username}\nID:       ${alvoID}\nSuspeita: ${palavrao}\nPresence: ${state}\`\`\``;
