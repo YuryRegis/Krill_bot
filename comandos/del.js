@@ -9,7 +9,7 @@ exports.run = async (client, message, args) => {
     const salaLogs  = await client.channels.cache.get(getID.sala.LOGS2),
           permissao = await verificaPerm(message.member);
 
-    if(permissao)
+    if(!permissao)
         return message.reply("te falta **poderes** para usar este comando!");
 
     else {
