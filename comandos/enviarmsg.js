@@ -8,7 +8,10 @@ exports.help = {
 }
 
 
-let index     = 0,
+exports.run = async (client, message, args) => {
+    await message.delete();
+    
+    let index     = 0,
     respostas = [],
     cancelado = false,
     perguntas = [
@@ -18,10 +21,6 @@ let index     = 0,
     'Mensagem:',
     'Envie uma imagem (digite "\`nada\`" para mensagem sem imagem):',
     'Envie uma thumbnail (digite "\`nada\`" para mensagem sem thumbnail):' ];
-
-
-exports.run = async (client, message, args) => {
-    await message.delete();
     
     if(!verificaPerm(message.member)) {
         return message.reply(" você não tem permissão para usar este comando."); 
@@ -43,14 +42,13 @@ exports.run = async (client, message, args) => {
             }]
         });
 
-        let inicio = `${author}, irei te auxiliar no processo de envio de mensagem.
-        \n Digite \`!cancelar\` a qualquer momento para **cancelar** e **deletar** este canal.\n\n\n`
 
         const filtro  = f => !f.author.bot;
 
 
         // PERGUNTA CANAL 
-        await novaSala.send(inicio + perguntas[index])
+        await novaSala.send(`${author}, irei te auxiliar no processo de envio de mensagem.
+        \n Digite \`!cancelar\` a qualquer momento para **cancelar** e **deletar** este canal.\n\n\n` + perguntas[index])
             .then(()=>{
                 let coletor = new MessageCollector(novaSala, filtro);
                 coletor.on('collect', async (msg, col) => {
