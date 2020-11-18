@@ -1,14 +1,12 @@
-const { verificaRole } = require('../funcoes/roles'),
+const { verificaRoles } = require('../funcoes/roles'),
       getID            = require('../funcoes/ids.json');
 
 
 module.exports = {
 
-    verificaPerm: function(member) {
+    verificaPerm: async function(member) {
         
-        if( verificaRole(member, getID.cargo.ADMIN) || 
-            verificaRole(member, getID.cargo.STAFF) ||
-            verificaRole(member, getID.cargo.MODERADOR) )
+        if( await verificaRoles(member, [getID.cargo.ADMIN, getID.cargo.STAFF, getID.cargo.MODERADOR]) )
              return true;
         else
             return false;
