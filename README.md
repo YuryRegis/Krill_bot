@@ -8,18 +8,17 @@
           
 ## COMANDOS
 
-COMANDO                 | USO                               | EXEMPLO
-:-------------          | :-------------------------------  | :--------------------------------
-[!banir](#banir)        | !banir <@member>                  | !banir @Elder
-[!del](#del)            | !del <quantiade>                  | !del 5
-[!denuncia](#denuncia)  | !denuncia                         | !denuncia
-[!desmutar](#mutar)     | !desmutar <@member>               | !desmutar @krab
-[!enviarmsg](#enviarmsg)| !enviarmsg                        | !enviarmsg
-[!enviarpv](#enviarpv)  | !enviarpv <@member> <mensagem>    | !enviarpv @StarKid I'm the boss
-[!kping](#kping)        | !kping                            | !kping
-[!mutar](#mutar)        | !mutar <@member>                  | !mutar @StarKid
-[!privado](#privado)    | !privado                          | !privado
-
+COMANDO                 | USO                               | PREVILÉGIOS REQUERIDOS
+:-------------          | :-------------------------------  | :---------------------------
+[!banir](#banir)        | !banir <@member>                  | @Admin @Staff
+[!del](#del)            | !del <quantiade>                  | @Admin @Staff @Moderador
+[!denuncia](#denuncia)  | !denuncia                         | Nenhum
+[!desmutar](#mutar)     | !desmutar <@member>               | @Admin @Staff 
+[!enviarmsg](#enviarmsg)| !enviarmsg                        | @Admin @Staff @Moderador
+[!enviarpv](#enviarpv)  | !enviarpv <@member> <mensagem>    | @Admin @Staff @Moderador
+[!kping](#kping)        | !kping                            | Nenhum
+[!mutar](#mutar)        | !mutar <@member>                  | @Admin @Staff
+[!privado](#privado)    | !privado                          | Nenhum
 
 <a id="banir"/> 
 
@@ -121,7 +120,7 @@ OBS:. Se o membro não permitir mensagens privadas uma mensagem de erro será en
 Como o esperado, retorna o tempo de resposta do bot (em ms).
 
 ### Previlégios
-@Admin @Staff @Moderador
+Qualquer um pode usar este comando.
 
 ### Uso
 ```
