@@ -231,7 +231,7 @@ exports.run = async (client, message, args) => {
                                                         
 
                                                         if( titulo !== null ) 
-                                                            embed.setTitle(`**${titulo}**`);
+                                                            embed.setTitle(`**${titulo.toUpperCase()}**`);
                                                         
                                                         if( msge !== null ) 
                                                             embed.setDescription(`${ments}\n\n` + msge);
