@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://i.ibb.co/41hYqVz/Krill-Logo.png  alt="drawing" width:"150";>
+  <img src="https://i.ibb.co/41hYqVz/Krill-Logo.png  alt="drawing" width="300";>
 </p>
                                                                               
 # KRILL - Discord bot
@@ -8,25 +8,24 @@
           
 ## COMANDOS
 
-COMANDO                 | USO                               | EXEMPLO
-:-------------          | :-------------------------------  | :--------------------------------
-[!banir](#banir)        | !banir <@member>                  | !banir @Elder
-[!del](#del)            | !del <quantiade>                  | !del 5
-[!denuncia](#denuncia)  | !denuncia                         | !denuncia
-[!desmutar](#mutar)     | !desmutar <@member>               | !desmutar @krab
-[!enviarmsg](#enviarmsg)| !enviarmsg                        | !enviarmsg
-[!enviarpv](#enviarpv)  | !enviarpv <@member> <mensagem>    | !enviarpv @StarKid I'm the boss
-[!kping](#kping)        | !kping                            | !kping
-[!mutar](#mutar)        | !mutar <@member>                  | !mutar @StarKid
-[!privado](#privado)    | !privado                          | !privado
-
+COMANDO                 | USO                               | PREVILÉGIOS REQUERIDOS
+:-------------          | :-------------------------------  | :---------------------------
+[!banir](#banir)        | !banir <@member>                  | @Admin @Staff
+[!del](#del)            | !del <quantiade>                  | @Admin @Staff @Moderador
+[!denuncia](#denuncia)  | !denuncia                         | Nenhum
+[!desmutar](#mutar)     | !desmutar <@member>               | @Admin @Staff 
+[!enviarmsg](#enviarmsg)| !enviarmsg                        | @Admin @Staff @Moderador
+[!enviarpv](#enviarpv)  | !enviarpv <@member> <mensagem>    | @Admin @Staff @Moderador
+[!kping](#kping)        | !kping                            | Nenhum
+[!mutar](#mutar)        | !mutar <@member>                  | @Admin @Staff
+[!privado](#privado)    | !privado                          | Nenhum
 
 <a id="banir"/> 
 
 ## Banir
 Este comando tem como função, banir membros do servidor. Membros banidos não poderão retornar desde que um Administrador do servidor intervenha.
 <p align="center">
-  <img src="https://media1.tenor.com/images/7129d4fbd2bd63ab987a768951ff44cb/tenor.gif" width:"150";>
+  <img src="https://media1.tenor.com/images/7129d4fbd2bd63ab987a768951ff44cb/tenor.gif" width="500";>
 </p>
 
 ### Previlégios
@@ -65,7 +64,7 @@ OBS:. O @Krill não pode deletar mensagens mais antigas do que 14 dias.
 ## Denunciar
 Este comando cria uma sala privada em que apenas você e o bot possuem permissão para visualiza-la. Após você escrever sua denúncia, o @krill irá encaminhar sua mensagem **anonimamente** para a administração do servidor.
 <p align="center">
-  <img src="https://i.ibb.co/NmxFfSW/denuncia.png" width:"150";>
+  <img src="https://i.ibb.co/NmxFfSW/denuncia.png" width="500";>
 </p>
 
 ### Previlégios
@@ -84,7 +83,7 @@ Qualquer membro pode usar este comando.
 Este comando permite enviar uma mensagem usando o bot. Ao usar este comando, uma sala sera criada para que você possa fornecer todos os dados que o @Krill precisa para que sua mensagem seja editada com perfeição, tais como: Sala destinada, menções, título da mensagem, thumbnail, imagem, etc.
 
 <p align="center">
-  <img src="https://i.ibb.co/16b1XKz/enviarmsg.png" width:"150";>
+  <img src="https://i.ibb.co/16b1XKz/enviarmsg.png" width="500";>
 </p>
 
 ### Previlégios
@@ -121,7 +120,7 @@ OBS:. Se o membro não permitir mensagens privadas uma mensagem de erro será en
 Como o esperado, retorna o tempo de resposta do bot (em ms).
 
 ### Previlégios
-@Admin @Staff @Moderador
+Qualquer um pode usar este comando.
 
 ### Uso
 ```
