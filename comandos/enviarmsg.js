@@ -43,13 +43,14 @@ exports.run = async (client, message, args) => {
             }]
         });
 
-        await novaSala.send(`${author}, irei te auxiliar no processo de envio de mensagem.
-        \n Digite \`!cancelar\` a qualquer momento para **cancelar** e **deletar** este canal.`);
+        let inicio = `${author}, irei te auxiliar no processo de envio de mensagem.
+        \n Digite \`!cancelar\` a qualquer momento para **cancelar** e **deletar** este canal.\n\n\n`
 
         const filtro  = f => !f.author.bot;
 
+
         // PERGUNTA CANAL 
-        await novaSala.send(perguntas[index])
+        await novaSala.send(inicio + perguntas[index])
             .then(()=>{
                 let coletor = new MessageCollector(novaSala, filtro);
                 coletor.on('collect', async (msg, col) => {
