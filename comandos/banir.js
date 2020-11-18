@@ -1,9 +1,10 @@
 
 
-const { verificaRole } = require('../funcoes/roles'),
-      { userToMember } = require('../funcoes/members'),
-      { embedSimples } = require('../funcoes/messages'),
-      getID            = require('../funcoes/ids.json');
+const { verificaRole }  = require('../funcoes/roles'),
+      { verificaRoles } = require('../funcoes/roles'),
+      { userToMember }  = require('../funcoes/members'),
+      { embedSimples }  = require('../funcoes/messages'),
+      getID             = require('../funcoes/ids.json');
 
 
 exports.help = {
@@ -13,7 +14,7 @@ exports.help = {
 
 exports.run = async (client, message, args) => {
     
-    if(!verificaRole(message.member, "Admin") || !verificaRole(message.member, "Staff"))
+    if(!verificaRole(message.member, getID.cargo.ADMIN) || !verificaRole(message.member, getID.cargo.STAFF))
         return message.reply(`você não possui permissão.`);
 
     const salaLogs   = await client.channels.cache.get(getID.sala.LOGS),
@@ -23,6 +24,9 @@ exports.run = async (client, message, args) => {
     
     if(membroAlvo === undefined)
         return message.reply(`não detectei nenhuma menção de usuário no comando.`);
+     
+    if(!verificaRole(message.member, getID.cargo.ADMIN) && verificaRoles(membroAlvo, [getID.cargo.STAFF, getID.cargo.MODERADOR]))
+          return message.reply(`banir membros com cargo @Staff ou @Moderador requer previlégios de Administrador.`);
     
     let msgMembro  = `${message.author} baniu você pelo seguinte motivo:\n\n${motivoBan}\n\n` +
                            `Você não poderá interagir no servidor **ThatSkyGameBrasil**`,
