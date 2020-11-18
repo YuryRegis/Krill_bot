@@ -1,5 +1,6 @@
 
 
+const { ReactionCollector } = require('discord.js');
 const { verificaRole }  = require('../funcoes/roles'),
       { verificaRoles } = require('../funcoes/roles'),
       { userToMember }  = require('../funcoes/members'),
@@ -13,9 +14,12 @@ exports.help = {
 
 
 exports.run = async (client, message, args) => {
+    let permAdmin = await verificaRole(message.member, getID.cargo.ADMIN),
+        permStaff = await verificaRole(message.member, getID.cargo.STAFF);
     
-    if(!verificaRole(message.member, getID.cargo.ADMIN) || !verificaRole(message.member, getID.cargo.STAFF))
-        return message.reply(`você não possui permissão.`);
+    if(!permAdmin)
+         if (!permStaff)
+            return message.reply(`você não possui permissão.`);
 
     const salaLogs   = await client.channels.cache.get(getID.sala.LOGS),
           salaAviso  = await client.channels.cache.get(getID.sala.AVISOS),
@@ -24,13 +28,16 @@ exports.run = async (client, message, args) => {
     
     if(membroAlvo === undefined)
         return message.reply(`não detectei nenhuma menção de usuário no comando.`);
-     
-    if(!verificaRole(message.member, getID.cargo.ADMIN) && verificaRoles(membroAlvo, [getID.cargo.STAFF, getID.cargo.MODERADOR]))
+    
+    let membroUser = await userToMember(membroAlvo, message),
+        permAlvo   = await verificaRoles(membroUser, [getID.cargo.STAFF, getID.cargo.MODERADOR]);
+    
+    console.log(permAlvo, membroAlvo);
+    if(!permAdmin && permAlvo)
           return message.reply(`banir membros com cargo @Staff ou @Moderador requer previlégios de Administrador.`);
     
     let msgMembro  = `${message.author} baniu você pelo seguinte motivo:\n\n${motivoBan}\n\n` +
                            `Você não poderá interagir no servidor **ThatSkyGameBrasil**`,
-        membroUser = await userToMember(membroAlvo, message),
         nomeMembro = membroAlvo.tag;
     
     // Mensagem privada para o membro banido
