@@ -6,9 +6,13 @@ const getID            = require('../funcoes/ids.json'),
 exports.run = async (client, message, args) => {
     
     const salaAtual = message.channel;
-    const salaLogs  = client.channels.cache.get(getID.sala.LOGS2);
+    const salaLogs  = await client.channels.cache.get(getID.sala.LOGS2),
+          permissao = await verificaPerm(message.member);
 
-    if( await verificaPerm(message.member)) {
+    if(!permissao)
+        return message.reply("te falta **poderes** para usar este comando!");
+
+    else {
         try {
             let num = 2;
             if(!isNaN(args[0]))
@@ -29,7 +33,7 @@ exports.run = async (client, message, args) => {
             console.log(err);
             salaLogs.send("MessageDelete error:\n"+`\`\`\`${err.code}\`\`\``);
         }
-    } else { message.reply(` você não possui permissão para usar este comando.`) }
+    }
 }
 
 exports.help = {
