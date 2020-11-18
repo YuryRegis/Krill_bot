@@ -37,7 +37,9 @@ module.exports = {
     verificaRole: async function(member, role) {
         const roles = await member.roles.cache;
         
-        if(roles.some(r => r.name === role || r.id === role))
+        if(roles.some(r => {
+            console.log(`Procurando por ${role} --> `,r.name, r.id);
+            return (r.name === role || r.id === role)}))
             return true;
         else
             return false;
@@ -49,7 +51,7 @@ module.exports = {
 
         for (let role of roles) {
             console.log("Verificando role ",role);
-            if (mbrRoles.some(r => r.name === role || r.id === role))
+            if (mbrRoles.some(r => (r.name === role || r.id === role)))
                 return true;
         }
         return false;
