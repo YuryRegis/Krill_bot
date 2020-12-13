@@ -105,12 +105,13 @@ client.on("message", async message => {
 				
 			message.delete();
 
-			salaAviso.send(`\`\`\`Detectei uma palavra de baixo calão ou na sala ${origem}
-			Autor: ${mbr.user.tag} (${mbr.user.username})
-			Detectado: ${palavroes}\`\`\``);
+			salaAviso.send(`Detectei uma palavra de baixo calão ou na sala ${origem}\`\`\`
+Autor:     ${mbr.user.tag} (${mbr.user.username})
+Detectado: ${palavroes}
+Conteúdo:  ${message.toString()}\`\`\``);
 
-			return message.reply(`\`\`\`Detectei uma ou mais palavras de baixo calão ou intenção de ofensa.\n
-			Seja gentil e respeitoso, sujeito à ficar silenciado em caso de reincidência.\`\`\``);
+			return message.reply(`\`\`\`Detectei uma ou mais palavras de baixo calão ou intenção de ofensa. Caso não seja palavrão, reporte a algum moderador, staff ou admin e tente usar um sinônimo.\n
+Lembre-se: Seja gentil e respeitoso, sujeito à ficar silenciado(a) em caso de reincidência.\`\`\``);
 
 		}
 	}
