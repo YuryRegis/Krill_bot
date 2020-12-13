@@ -97,7 +97,7 @@ client.on("message", async message => {
 
 	if(salatual !== mais18) {
 		let palavroes = await verificaPalavrao(message),
-		    permissao = await verificaRoles(mbr, [getID.cargo.ADMIN]);
+		    permissao = await verificaRoles(mbr, [getID.cargo.ADMIN,getID.cargo.STAFF,getID.cargo.MODERADOR]);
 
 		if(palavroes && !permissao) {
 			let salaAviso = await message.guild.channels.cache.get(getID.sala.LOGS),
