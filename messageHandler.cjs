@@ -1,11 +1,10 @@
 const getID             = require('./funcoes/ids.json'),
-      { verificaVIP }   = require('./comandos/assets/loto/ticket'),
+    //   { verificaVIP }   = require('./comandos/assets/loto/ticket'),
       { verificaRole, verificaRoles } = require('./funcoes/roles');
 
 exports.run = async (message, queue, client) => {
 	const config         = require("./config.json"),
 	      serverQueue    = queue.get(message.guild.id),
-		  responseobject = require(`./comandos/responseobject.cjs`),
 	      salaLogs       = await client.channels.cache.get(getID.sala.LOGS),
 	    //   radio          = await client.channels.cache.get(getID.sala.RADIO),
 	      args           = message.content.slice(config.prefix.length).trim().split(/ +/g);
@@ -54,7 +53,7 @@ exports.run = async (message, queue, client) => {
 	if(client.commands.get(comando)) {  //Comando === comandos previamente carregados?
 		
 		if (message.content[0] === config.prefix) {
-			verificaVIP(message);
+			//verificaVIP(message);
 			
 			console.log(`${comando} digitado por ${user} no canal ${ch}.`);
 
@@ -63,15 +62,7 @@ exports.run = async (message, queue, client) => {
 				
 			client.commands.get(comando).run(client, message, args, queue, serverQueue);
 		} else return;
-	} else 
-		if (message.channel.id === getID.sala.CHATBOT) { //ignora mensagens simples do canal #pergunte_ao_bot
-			if (message.content[0] == config.prefix) {
-				responseobject.run(message, sender, client);
-			}
-			return;
-		} 
-		responseobject.run(message, sender, client);
-	
+	} 
     
     //filtrar menções here e everyone
     if(message.mentions.everyone) {
