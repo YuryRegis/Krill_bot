@@ -4,8 +4,9 @@ const Discord = require("discord.js");
 const client = new Discord.Client();
 const getID = require('./funcoes/ids.json');
 const config = require("./config.json");
-const { verificaRoles } = require('./funcoes/roles');
+const { verificaRoles } = require('./funcoes/roles'); 
 const messageHandler = require("./messageHandler.cjs");
+const { verificaPalavrao } = require('./funcoes/funcoes');
 const { setRole, rmvAddLog, mbrUPD, prsUPD } = require("./funcoes/funcoes");
 
 
@@ -78,10 +79,12 @@ client.on("raw", async data => {
 
 
 client.on("message", async message => {
-	let bemVindo = getID.sala.BEMVINDO;
+	let bemVindo = getID.sala.BEMVINDO,
+		mais18   = getID.sala.MAIS18,
+		salatual = message.channel.id,
+		mbr      = message.member;
 	    
-	if (message.channel.id === bemVindo) { 
-		let mbr = message.member;
+	if (salatual === bemVindo) { 
 		let verificacao = await (verificaRoles(mbr, [getID.cargo.ANDROID, getID.cargo.APPLE, getID.cargo.BETA, getID.cargo.GLOBAL]));
 		if(!verificacao) {
 			let salaRegras = await message.guild.channels.cache.get(getID.sala.REGRAS);
@@ -89,6 +92,26 @@ client.on("message", async message => {
 			message.reply(`para ter acesso ao servidor, você precisa **aceitar** nossos termos e ${salaRegras}.`,
 				{ file:"https://i.ibb.co/GVwYx24/regras.png" });
 			return;
+		}
+	}
+
+	if(salatual !== mais18) {
+		let palavroes = await verificaPalavrao(message),
+		    permissao = await verificaRoles(mbr, [getID.cargo.ADMIN]);
+
+		if(palavroes && !permissao) {
+			let salaAviso = await message.guild.channels.cache.get(getID.sala.LOGS),
+				origem    = await message.guild.channels.cache.get(salatual);
+				
+			message.delete();
+
+			salaAviso.send(`\`\`\`Detectei uma palavra de baixo calão ou na sala ${origem}
+			Autor: ${mbr.user.tag} (${mbr.user.username})
+			Detectado: ${palavroes}\`\`\``);
+
+			return message.reply(`\`\`\`Detectei uma ou mais palavras de baixo calão ou intenção de ofensa.\n
+			Seja gentil e respeitoso, sujeito à ficar silenciado em caso de reincidência.\`\`\``);
+
 		}
 	}
 
