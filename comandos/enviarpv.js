@@ -1,4 +1,4 @@
-const { verificaRole } = require('../funcoes/roles'),
+const { verificaRoles } = require('../funcoes/roles'),
       getID            = require('../funcoes/ids.json');
 
 
@@ -9,7 +9,7 @@ exports.help = {
 exports.run = async (client, message, args) => {
     await message.delete();
     
-    if(verificaRole(message.member, getID.cargo.ADMIN) || verificaRole(message.member, getID.cargo.STAFF)) {
+    if(verificaRoles(message.member, [getID.cargo.ADMIN, getID.cargo.STAFF])) {
         let mensaoUsuario = /@/;
         let canal = await message.channel;
 
