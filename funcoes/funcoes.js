@@ -1,4 +1,4 @@
-const regex = /p[oòóôõö]+(rr|h)[aàáâãä]|p[oòóôõö](rr|h)[\S]+nh[\S]|(c|k)[\S]+r[\S]+lh[\S]+|(c|k)[uùúüû]+(\s|\n|$|!|\.|\?)|(c|k)[\duùúüû]+[sz][\S]+|b[\duùúüûoòóõôö]+(c|s)[\S]+t[\S]+|p[\diìíïî]+(c|k|ck)+[aàáäâ]|p[\diìíïî]+r[\doóòöô]+[ck][\S]+|(p[\duùúüû]+t[\daàáäâãoóòôõôeêéèë]+[\S]+)|[ck][\daàáâãä][cs][\S]+t[\S]|[ck][aàáâãä]7|p[\S]+r[\S]+r[\S]+[ck][\s\S]{1}|f[\doòóôõöuùúüû]+d[\S]+r|(x|ch)[\S]+(x|ch)[\S]+t[\S]+|(x|ch)[\doòóôõö]+t[\daáàãâä]+|b[\doòóõôö]+(qu|k)[\S]+t[\S]+|p[\deéèêë]+n+[\diíìîï]+s|[\daàáâãä]+n+[\daàáâãä]+(u|l)+(\s|\n|\.|\?|!)|[\daàáâãä]+n+[uùúûü]+s|[\doòóôõö]+t+[\daàáâãä]+r+[\S]+|b[\S]b[\S](c|K)(\S|$|\s)|pr[\S]+(x|ch)[\S]+(c|k)(\S|$|\s|\n)|p[\S]+s+y|(x|ch)[\S]+b+[\S]+(c|k)|(x|ch)[\daàáâãä]+n+[\daàáâãä]+|b[\doòóôõö]+g+[\daàáâãä]+|m[\deèéêë]+r+d+[\S]+|f[\doóòõôöuúùûü]+d+[\S]+|f[\S]+ck|d[\S]+ck/gi
+const regex = /p[\doòóôõö]+(rr|h)[\daàáâãä]|p[\doòóôõö](rr|h)[\S]+nh[\S]|(c|k)[\S]+r[\S]+lh[\S]+|(c|k)[\duùúüû]+(\s|\n|$|!|\.|\?)|(c|k)[\duùúüû]+[sz][\S]+|b[\duùúüûoòóõôö]+(c|s)[\S]+t[\S]+|p[\diìíïî]+(c|k|ck)+[\daàáäâ]|p[\diìíïî]+r[\doóòöô]+[ck][\S]+|p[\duùúüû]+t[\daàáäâãoóòôõôeêéèë]+[\S]*|[ck][\daàáâãä][cs][\S]+t[\S]|[ck][\daàáâãä]7|p[\S]+r[\S]+r[\S]+[ck][\s\S]{1}|f[\doòóôõöuùúüû]+d[\S]+r|(x|ch)[\S]+(x|ch)[\S]+t[\S]+|(x|ch)[\doòóôõö]+t[\daáàãâä]+|b[\doòóõôö]+(qu|k)[\S]+t[\S]+|p[\deéèêë]+n+[\diíìîï]+s|\b[\daàáâãä]+n+[\daàáâãä]+(u|l)+\b|[\daàáâãä]+n+[\duùúûü]+s|[\doòóôõö]+t+[\daàáâãä]+r+[\S]+|b[\S]b[\S](c|K)(\S|$|\s)|pr[\S]+(x|ch)[\S]+(c|k)(\S|$|\s|\n)|p[\S]+s+y|(x|ch)[\S]+b+[\S]+(c|k)|(x|ch)[\daàáâãä]+n+[\daàáâãä]+|b[\doòóôõö]+g+[\daàáâãä]+|m[\deèéêë]+r+d+[\S]+|f[\doóòõôöuúùûü]+d+[\S]+|f[\S]+ck|d[\S]+ck|\bv?tnc\b|\bpqp\b|\bvsf\b|\bkct\b|\bpnc\b|\bfdp\b|\b(c|k)rlh?\b/gi
 
 module.exports = {
 
@@ -48,7 +48,7 @@ module.exports = {
             if(regex.test(state.toLowerCase())) {
                 let alvoID   = data.d.user.id,
                     alvo     = await client.users.cache.get(data.d.user.id),
-                    palavrao = await regex.exec(state.toLowerCase())[0],
+                    palavrao = await state.match(regex),
                     msg      = `Pessoal, encontrei uma ** *RichPresence* **suspeita, poderiam verificar?\n`,
                     terminal = msg + `\`\`\`Membro:   ${alvo.tag}\nNome:     ${alvo.username}\nID:       ${alvoID}\nSuspeita: ${palavrao}\nPresence: ${state}\`\`\``;
                 
@@ -68,11 +68,11 @@ module.exports = {
             msg  = `Pessoal, encontrei um **nome** ou** *nick* **suspeito, poderiam verificar?\n`;
         
         if( regex.test(nome.toLowerCase()) ) {
-            let palavrao = await regex.exec(nome.toLowerCase())[0],
+            let palavrao = await nome.toLowerCase().match(regex),
                 terminal = msg + `\`\`\`Membro:    ${nome}\nID:        ${id}\nSuspeita:  ${palavrao}\nVerificar: ${nick}\`\`\``;
             return terminal;
         }
-        if( nick !== null ) {
+        if( nick !== undefined ) {
             if( regex.test(nick.toLowerCase()) ){
                 let palavrao = await regex.exec(nick.toLowerCase())[0],
                     terminal = msg + `\`\`\`Membro:    ${nome}\nID:        ${id}\nSuspeita:  ${palavrao}\nVerificar: ${nick}\`\`\``;
@@ -84,7 +84,7 @@ module.exports = {
 
     // retorna lista de palavões ou falso para caso de não encontrar palavrões
     verificaPalavrao: async function(message) {
-        listaPalavrao = message.match(regex); 
+        listaPalavrao = await message.toString().match(regex); 
         if(listaPalavrao === null)
             return false;
         return listaPalavrao;
