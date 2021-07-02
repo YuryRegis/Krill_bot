@@ -7,10 +7,11 @@ module.exports = {
         let servidor = await client.guilds.cache.get(servidorID);
         let membro   = await servidor.members.cache.get(data.d.user_id);
 
-        let android = await servidor.roles.cache.get(getID.cargo.ANDROID),
-            apple   = await servidor.roles.cache.get(getID.cargo.APPLE),
-            beta    = await servidor.roles.cache.get(getID.cargo.BETA),
-            skyG    = await servidor.roles.cache.get(getID.cargo.GLOBAL);
+        let android  = await servidor.roles.cache.get(getID.cargo.ANDROID),
+            nintendo = await servidor.roles.cache.get(getID.cargo.SWITCH),
+            apple    = await servidor.roles.cache.get(getID.cargo.APPLE),
+            beta     = await servidor.roles.cache.get(getID.cargo.BETA),
+            skyG     = await servidor.roles.cache.get(getID.cargo.GLOBAL);
 
         if(data.t === "MESSAGE_REACTION_ADD" || data.t === "MESSAGE_REACTION_REMOVE") {
             if(data.d.emoji.id === "698184753848778883") { 
@@ -28,6 +29,10 @@ module.exports = {
             else if(data.d.emoji.name === "🌐") {
                 if(membro.roles.cache.has(skyG)) return
                 (data.t === "MESSAGE_REACTION_ADD") ? membro.roles.add(skyG) : membro.roles.remove(skyG);
+            }
+             else if(data.d.emoji.name === "🎮") {
+                if(membro.roles.cache.has(skyG)) return
+                (data.t === "MESSAGE_REACTION_ADD") ? membro.roles.add(nintendo) : membro.roles.remove(nintendo);
             }
         }
     },
