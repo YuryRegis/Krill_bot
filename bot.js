@@ -85,7 +85,7 @@ client.on("message", async message => {
 		mbr      = message.member;
 	    
 	if (salatual === bemVindo) { 
-		let verificacao = await (verificaRoles(mbr, [getID.cargo.ANDROID, getID.cargo.APPLE, getID.cargo.BETA, getID.cargo.GLOBAL]));
+		let verificacao = await (verificaRoles(mbr, [getID.cargo.ANDROID, getID.cargo.APPLE, getID.cargo.BETA, getID.cargo.GLOBAL, getID.cargo.SWITCH]));
 		if(!verificacao) {
 			let salaRegras = await message.guild.channels.cache.get(getID.sala.REGRAS);
 			
