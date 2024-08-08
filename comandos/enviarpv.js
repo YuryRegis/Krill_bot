@@ -29,7 +29,8 @@ exports.run = async (client, message, args) => {
             if(!membro) {
                 return canal.send(`Membro não encontrado.`);
             }
-            return membro.send( `${membro.user.username}: ${args.slice(1).join(" ")}` )
+            const username = membro.user.username.replace(/\d+/g, '')
+            return membro.send( `${username}: ${args.slice(1).join(" ")}` )
                 .then()
                 .catch(err => { canal.send("Terminal `!enviarpv`" + `\`\`\`${err}\`\`\``) }); 
         } else {
