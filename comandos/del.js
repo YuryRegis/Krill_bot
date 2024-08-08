@@ -6,7 +6,7 @@ const getID            = require('../funcoes/ids.json'),
 exports.run = async (client, message, args) => {
     
     const salaAtual = await message.channel;
-    const salaLogs  = await client.channels.cache.get(getID.sala.LOGS2),
+    const salaLogs  = await client.channels.cache.get(getID.sala.LOGS),
           permissao = await verificaPerm(message.member);
 
     if(!permissao)
