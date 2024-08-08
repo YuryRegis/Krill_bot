@@ -40,26 +40,37 @@ module.exports = {
 
     // Verifica se membro possui uma role
     verificaRole: async function(member, role) {
-        const roles = await member.roles.cache;
-        
-        if(roles.some(r => {
-            console.log(`Procurando por ${role} --> `,r.name, r.id);
-            return (r.name === role || r.id === role)}))
-            return true;
-        else
+        try {
+            const roles = await member?.roles?.cache;
+            
+            if(!roles) return false;
+
+            const hasRole = roles.some(r => {
+                console.log(`Procurando por ${role} --> `,r.name, r.id);
+                return (r.name === role || r.id === role)
+            })
+            return Boolean(hasRole);
+        } catch(err) {
+            console.log('VERIFICA_ROLE_ERROR', JSON.stringify(err));
             return false;
+        }
     },
 
     // Verifica se membro possui uma role a partir de uma lista de roles
     verificaRoles: async function(member, roles=Array()) {
-        const mbrRoles = await member.roles.cache;
+        try {
+            const mbrRoles = await member?.roles?.cache;
+            if (!mbrRoles) return false;
 
-        for (let role of roles) {
-            console.log("Verificando role ",role);
-            if (mbrRoles.some(r => (r.name === role || r.id === role)))
-                return true;
+            for (let role of roles) {
+                console.log("Verificando role ",role);
+                if (mbrRoles.some(r => (r.name === role || r.id === role)))
+                    return true;
+            }
+            return false;
+        } catch(err) {
+              console.log('VERIFICA_ROLES_ERROR', JSON.stringify(err));
+              return false;
         }
-        return false;
     }
-
 }
