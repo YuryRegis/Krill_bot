@@ -1,4 +1,4 @@
-const regex = /\bp[\doòóôõö@]+(r+|h+)[\daàáâãä@iìíïî]+n*h*[\S]*|\b[\deèéêëê]+s+p+[oòóôö@]+r+[\deèéêë@aàáâãä]+[\S]*|\b(c|k)[\daáàâãä@]+r[\daáàâãä@]+lh[\S]+|\b(c|k)[uùúüû]+(\s|\n|$|!|\.|\?)\b|\b(c|k)[uùúüû]+[sz]+[\diìíïaâãàáä@]+[\S]+|b[\duùúüûoòóõôö]+(c|s)+[\deèéêë]+t+[\diìíîïaâãàá@]+[\S]+|\bp+[\diìíïî]+(c|k|ck)+[\daàáäâ@]\b|\bp[\diìíïî]+r[\doóòöô@]+(c|k)+[\S]*|\bp[uùúüû#@]+t[\daàáäâãiìíîïoóòôõôeêéèë@]+(r|n)*[\S]*|\b(c|k)[\daàáâãä@](c|s)[\deèéêë&]+t[\S]|\b(c|k)[\daàáâãä@]7\b|\bp[\deèéêë]*r[\deèéêë]+r[\deèéêë]+(c|k)[\s\S]{1}|\bf[\doòóôõöuùúüû@]+d[\S]+r|\b(x|ch|sh)+[\doòóôõö]+(x|ch|sh)*[\doòóôõö]*t+[\daàáâãäiìíïî]+[\S]*|\bb[\doòóõôö@]+(qu|k)[\S]+t[\S]+|\bp[\deéèêë&]+n+[\diíìîï]+s+|\b[\daàáâãä@]+n+[\daàáâãä@]+(u|l|o)+\b|\b[\daàáâãä@]+n+[uùúûü]+s+\s|\b[\doòóôõö@]+t+[\daàáâãä@]+r+[\diíìîï]+[\doóòôõö@]+|\bb[\daâãàá@]+b[\daâãàá@]+(c|K)+[\daâãàá@]*(\S|$|\s)|\bpr[\deéèêë]+(x|ch|sh)+[\deéèêë]+(c|k)+[\daâãàá@iìíïî]*n*h*[\daâãàá@]*\b|\bp[uúùûü]+s+y\b|\b(x|ch)[\daàáâãä@]+b+[\S]+(c|k)|\b(x|ch|sh)+[\daàáâãä@]+n+[\daàáâãä@iìíïî]+n*h*[\daàáâãä@]*|\bb[\doòóôõö@]+g+[\daàáâãä@]+|\bf[\doóòõôöuúùûü@]+d+[\S]+|\bf[\duúùüûoòóôöõ@]+ck|\bd[\diìíîïi]+ck|\bv?tnc\b|\bpqp\b|\bvsf\b|\bkct\b|\bpnc\b|\bfdp\b|\b(c|k)rlh?\b/gi
+const regex = /\bp[\doòóôõö@]+(r+|h+)[\daàáâãä@iìíïî]+n*h*[\S]*|\b[\deèéêëê]+s+p+[oòóôö@]+r+[\deèéêë@aàáâãä]+[\S]*|\b(c|k)[\daáàâãä@]+r[\daáàâãä@]+lh[\S]+|\b(c|k)[uùúüû]+(\s|\n|$|!|\.|\?)\b|\b(c|k)[uùúüû]+[sz]+[\diìíïaâãàáä@]+[\S]+|b[\duùúüûoòóõôö]+(c|s)+[\deèéêë]+t+[\diìíîïaâãàá@]+[\S]+|\bp+[\diìíïî]+(c|k|ck)+[\daàáäâ@]\b|\bp[\diìíïî]+r[\doóòöô@]+(c|k)+[\S]*|\bp[uùúüû#@]+t[\daàáäâãiìíîïoóòôõôeêéèë@]+(r|n)*[\S]*|\b(c|k)[\daàáâãä@](c|s)[\deèéêë&]+t[\S]|\b(c|k)[\daàáâãä@]7\b|\bp[\deèéêë]*r[\deèéêë]+r[\deèéêë]+(c|k)[\s\S]{1}|\bf[\doòóôõöuùúüû@]+d[\S]+r|\b(x|ch|sh)+[\doòóôõö]+(x|ch|sh)*[\doòóôõö]*t+[\daàáâãäiìíïî]+[\S]*|\bb[\doòóõôö@]+(qu|k)[\S]+t[\S]+|\bp[\deéèêë&]+n+[\diíìîï]+s+|\b[\daàáâãä@]+n+[\daàáâãä@]+(u|l|o)+\b|\b[\daàáâãä@]+n+[uùúûü]+s+\s|\b[\doòóôõö@]+t+[\daàáâãä@]+r+[\diíìîï]+[\doóòôõö@]+|\bb[\daâãàá@]+b[\daâãàá@]+(c|K)+[\daâãàá@]*(\S|$|\s)|\bpr[\deéèêë]+(x|ch|sh)+[\deéèêë]+(c|k)+[\daâãàá@iìíïî]*n*h*[\daâãàá@]*\b|\bp[uúùûü]+s+y\b|\b(x|ch)[\daàáâãä@]+b+[\S]+(c|k)|\b(x|ch|sh)+[\daàáâãä@]+n+[\daàáâãä@iìíïî]+n*h*[\daàáâãä@]*|\bb[\doòóôõö@]+g+[\daàáâãä@]+|\bf[\doóòõôöuúùûü@]+d+[\S]+|\bf[\duúùüûoòóôöõ@]+ck|\bd[\diìíîïi]+ck|\bv?tnc\b|\bpqp\b|\bvsf\b|\bkct\b|\bpnc\b|\bfdp\b|\b(c|k)r?lh?\b|\bbct\b|\b(c|k)[\duúûüù]\b|\bcudoce|\bm[eèéêë3]rd[aàáâãä4]|b[oõôöòó0]st|\bb[aãàäáâ4][iìíîï1]t[oõôöòó0]|\bs[eèéêë3]x[oõôöòó0]|\bv[aàáâãä4]d[iìíîï1][aãàäáâ4oõôöòó0]/gi
 
 module.exports = {
 
@@ -105,14 +105,13 @@ module.exports = {
     verificaPalavrao: async function(message) {
         try {
             listaPalavrao = await message.toString().match(regex); 
-            if(listaPalavrao === null)
+            
+            if(!listaPalavrao)
                 return false;
+
             return listaPalavrao;
         } catch (error) { 
             console.error('VERIFICA_PALAVRAO_ERROR:', JSON.stringify(error)); 
-        }
-        finally {
-            return null;
         }
     },
 
