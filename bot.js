@@ -105,48 +105,59 @@ client.on(Discord.Events.InteractionCreate, async interaction => {
 
 
 client.on("guildCreate", guild => {
-    console.log(`O bot entrou no servidor ${guild.name} id:${guild.id} com ${guild.memberCount} membros.`);
-    client.user.setActivity(`Estou em ${guilds.size} servidores!`);
+	try {
+		console.log(`O bot entrou no servidor ${guild.name} id:${guild.id} com ${guild.memberCount} membros.`);
+	}
+	catch (error) {
+		errorLog({message: 'GUILD_CREATE_ERROR:', client, error});
+	}
 })
 
 
 client.on("guildDelete", guild => {
-    console.log(`Bot removido do servidor ${guild.name} id: ${guild.id}`);
-    client.user.setActivity(`Estou em ${guilds.size} servidores.`);
+	try {
+		console.log(`Bot removido do servidor ${guild.name} id: ${guild.id}`);
+	} catch (error) {
+		errorLog({message: 'GUILD_DELETE_ERROR:', client, error});
+	}
 })
 
 
 client.on("raw", async data => {
-	let regrasID   = getID.sala.REGRAS,
-	    servidorID = getID.SERVIDOR;
+	try {
+		let regrasID   = getID.sala.REGRAS,
+			servidorID = getID.SERVIDOR;
 
-	if(data.t === "MESSAGE_REACTION_ADD" || data.t === "MESSAGE_REACTION_REMOVE") {
-		if(data.d.message_id !== regrasID) return
-		setRole(client, data, servidorID);
-		return;
-	}
+		if(data.t === "MESSAGE_REACTION_ADD" || data.t === "MESSAGE_REACTION_REMOVE") {
+			if(data.d.message_id !== regrasID) return
+			setRole(client, data, servidorID);
+			return;
+		}
 
-	let salaLogs = await client.channels.cache.get(getID.sala.LOGS);
-	
-	if(data.t === 'GUILD_MEMBER_REMOVE' || data.t === 'GUILD_MEMBER_ADD') {
-		let resposta = "";
-		(data.t === 'GUILD_MEMBER_REMOVE') ? resposta = await rmvAddLog(data, false) : resposta = await rmvAddLog(data, true);   
-		salaLogs.send(resposta);
-	}
-
-	if(data.t === 'PRESENCE_UPDATE') {
-		if(data.d===undefined) return;
+		let salaLogs = await client.channels.cache.get(getID.sala.LOGS);
 		
-		let resposta = await prsUPD(data, client);
+		if(data.t === 'GUILD_MEMBER_REMOVE' || data.t === 'GUILD_MEMBER_ADD') {
+			let resposta = "";
+			(data.t === 'GUILD_MEMBER_REMOVE') ? resposta = await rmvAddLog(data, false) : resposta = await rmvAddLog(data, true);   
+			salaLogs.send(resposta);
+		}
 
-		if(resposta!==null) return salaLogs.send(resposta);
-	}
+		if(data.t === 'PRESENCE_UPDATE') {
+			if(data.d===undefined) return;
+			
+			let resposta = await prsUPD(data, client);
+
+			if(resposta!==null) return salaLogs.send(resposta);
+		}
 
 
-	if(data.t === 'GUILD_MEMBER_UPDATE') {
-		let resposta = await mbrUPD(data, client);
+		if(data.t === 'GUILD_MEMBER_UPDATE') {
+			let resposta = await mbrUPD(data, client);
 
-		if(resposta!==null) return salaLogs.send(resposta);
+			if(resposta!==null) return salaLogs.send(resposta);
+		}
+	} catch (error) {
+		errorLog({message: 'RAW_EVENT_ERROR:', client, error});
 	}
 })
 
