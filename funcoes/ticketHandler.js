@@ -44,7 +44,7 @@ async function denunciaHandler(client, interaction) {
         logHandler({message: `Denúncia aberta por ${interaction.user.tag}`, client});
 
         const name = `denuncia-${userTag}`;
-        const userTicketChannel = interaction.guild.channels.cache.find(channel => channel.name === name);
+        const userTicketChannel = await interaction.guild.channels.cache.find(channel => channel.name === name);
         if (userTicketChannel) {
             return interaction.reply({ content: `⚠️ Você já possui uma denúncia aberta em ${userTicketChannel}.`, ephemeral: true });
         }

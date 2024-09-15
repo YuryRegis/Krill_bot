@@ -85,7 +85,7 @@ client.on(Discord.Events.InteractionCreate, async interaction => {
 		const command = interaction.client.commands.get(interaction.commandName);
 
 		if (!command) {
-			return logError({
+			return errorLog({
 				client, 
 				message: 'INTERACTION_CREATE_EVENT_ERROR:', 
 				error: `No command matching ${interaction.commandName} was found.`
@@ -94,7 +94,7 @@ client.on(Discord.Events.InteractionCreate, async interaction => {
 		await command.execute(interaction);
 	} catch (error) {
 		console.error(error);
-		logError({message: 'INTERACTION_CREATE_EVENT_ERROR:', client, error});
+		errorLog({message: 'INTERACTION_CREATE_EVENT_ERROR:', client, error});
 		if (interaction.replied || interaction.deferred) {
 			await interaction.followUp({ content: 'There was an error while executing this command!', ephemeral: false });
 		} else {
@@ -156,15 +156,15 @@ client.on("messageCreate", async message => {
 		// verifica se é uma mensagem do bot
 		if (message.author.bot) return;
 
-		console.log('MENSAGEM >>>>', message);
+		// console.log('MENSAGEM >>>>', message);
 		let bemVindo = getID.sala.BEMVINDO,
 			mais18   = getID.sala.MAIS18,
 			salatual = message.channel.id,
 			mbr      = message.member;
-
+		// console.log('MBR >>>>', mbr);
 		if(salatual !== mais18) {
-			let palavroes = await verificaPalavrao(message),
-				permissao = await verificaRoles(mbr, [getID.cargo.ADMIN,getID.cargo.STAFF,getID.cargo.MODERADOR]);
+			const palavroes = await verificaPalavrao(message);
+			const permissao = false;//await verificaRoles(mbr, [getID.cargo.ADMIN,getID.cargo.STAFF,getID.cargo.MODERADOR]);
 			console.log('EVIDENCIA >>>>', {palavroes, permissao});
 			if(palavroes && !permissao) {
 				let salaAviso = await message.guild.channels.cache.get(getID.sala.LOGS),
@@ -197,7 +197,7 @@ client.on("messageCreate", async message => {
 		messageHandler.run(message, queue, client);
 		return undefined;
 	} catch (error) {
-		client.channels.cache.get(getID.sala.LOGS).send(`MESSAGE_HANDLER_ERROR: ${error}`);
+		errorLog({message: 'MESSAGE_HANDLER_ERROR:', client, error});
 	}
 });
 

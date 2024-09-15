@@ -106,7 +106,8 @@ module.exports = {
     // retorna lista de palavões ou falso para caso de não encontrar palavrões
     verificaPalavrao: async function(message) {
         try {
-            listaPalavrao = await message.toString().match(regex); 
+            const content = message.content.toString().toLowerCase();
+            listaPalavrao = await content.match(regex); 
             
             if(!listaPalavrao)
                 return false;

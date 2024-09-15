@@ -1,6 +1,8 @@
-const getID             = require('./funcoes/ids.json'),
-    //   { verificaVIP }   = require('./comandos/assets/loto/ticket'),
-      { verificaRole, verificaRoles } = require('./funcoes/roles');
+const getID = require('./funcoes/ids.json');
+    //  const { verificaVIP }   = require('./comandos/assets/loto/ticket');
+const { verificaRole, verificaRoles } = require('./funcoes/roles');
+const errorLog = require('./funcoes/errorHandler');
+const logMessage = require('./funcoes/logHandler');
 
 exports.run = async (message, queue, client) => {
 	try {
@@ -8,15 +10,12 @@ exports.run = async (message, queue, client) => {
 
 		const 	config         = require("./config.json"),
 				serverQueue    = queue?.get(message?.guild?.id),
-				salaLogs       = await client?.channels?.cache?.get(getID.sala.LOGS),
-				//   radio          = await client.channels.cache.get(getID.sala.RADIO),
 				args           = message?.content?.slice(config.prefix.length).trim().split(/ +/g);
 			
 		let sender  = message?.author, //Captura autor da mensagem
-			user    = message?.member?.user?.tag,
+			user    = message?.member?.user?.username,
 			comando = args?.shift()?.toLowerCase(),
 			ch      = message?.channel?.name?.toString();
-		
 		
 		//Restringindo canal comandos_bot
 		if(message?.channel?.id === getID.sala.CMDBOT) {
@@ -51,19 +50,18 @@ exports.run = async (message, queue, client) => {
 				else return;	
 			} //fim verificação de roles
 		}
-
-
-		if(client?.commands?.get(comando)) {  //Comando === comandos previamente carregados?
-			
+		const serverCommand = client.commands.get(comando);
+		if(serverCommand) {  //Comando === comandos previamente carregados?
 			if (message?.content[0] === config.prefix) {
 				//verificaVIP(message);
 				
-				console.log(`${comando} digitado por ${user} no canal ${ch}.`);
+				const warningMessage = `Comando ${comando} usado por ${user} no canal ${ch}.`;
+				console.log(warningMessage);
 
 				if(comando !== 'denuncia')
-					salaLogs.send(`${comando} digitado por ${user} no canal ${ch}.`);
+					logMessage.run({message: warningMessage, client});
 					
-				client.commands.get(comando).run(client, message, args, queue, serverQueue);
+				serverCommand.run(client, message, args, queue, serverQueue);
 			} else return;
 		} 
 		
@@ -79,6 +77,6 @@ exports.run = async (message, queue, client) => {
 			await message.delete();
 		}
 	} catch (error) {
-		console.log(`COMMAND_HANDLER_ERROR: ${error}`);
+		errorLog.run({message: 'COMMAND_HANDLER_ERROR:', client, error});
 	}	
 }

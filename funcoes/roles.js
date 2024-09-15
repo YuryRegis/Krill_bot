@@ -1,4 +1,5 @@
 const getID = require('../funcoes/ids.json');
+const {run: errorLog} = require('../funcoes/errorHandler');
 
 module.exports = {
 
@@ -50,8 +51,8 @@ module.exports = {
                 return (r.name === role || r.id === role)
             })
             return Boolean(hasRole);
-        } catch(err) {
-            console.log('VERIFICA_ROLE_ERROR', JSON.stringify(err));
+        } catch(error) {
+            errorLog({message: 'VERIFICA_ROLE_ERROR:', client, error});
             return false;
         }
     },
@@ -68,9 +69,9 @@ module.exports = {
                     return true;
             }
             return false;
-        } catch(err) {
-              console.log('VERIFICA_ROLES_ERROR', JSON.stringify(err));
-              return false;
+        } catch(error) {
+            errorLog({message: 'VERIFICA_ROLES_ERROR:', client, error});
+            return false;
         }
     }
 }

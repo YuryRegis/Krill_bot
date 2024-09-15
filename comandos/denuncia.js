@@ -8,31 +8,74 @@ exports.run = async (client, message, args) => {
         message.delete();
     
         let denRoom = await message.guild.channels.cache.get(getID.sala.DENUNCIA),
-            logRoom = await message.guild.channels.cache.get(getID.sala.AVISOS),
             autor   = message.author,
-            tag     = 'd_' + autor.tag + '🔐',
-            info    = `${autor} explique detalhadamente sua denúncia. Adicione imagem/print em uma única mensagem, se houver.`;
+            info    = `${autor.globalName} explique detalhadamente sua denúncia`;
         // let novaRole = await message.guild.createRole({
         //     name: tag,
         //     hoist: false,
         //     mentionable: false,
         // });
+        const name = `🔐-denuncia-anonima-${autor.username.match(/\d+/g)[0]}`;
+        const userTicketChannel = await message.guild.channels.cache.find(channel => channel.name === name);
+        if (userTicketChannel) {
+            return message.reply({ content: `⚠️ Você já possui uma denúncia aberta em ${userTicketChannel}.`, ephemeral: true });
+        }
+        let novaSala = await message.guild.channels.create( 
+            {
+                name: name,
+                reason: `Denuncia anônima aberta.`,
+                type: Discord.ChannelType.GuildText,
+                PermissionOverwrites: [
+                    {
+                        id: message.guild.id,
+                        deny: [Discord.PermissionFlagsBits.ViewChannel],
+                    },
+                    {
+                        id: autor.id,
+                        allow: [
+                            Discord.PermissionFlagsBits.EmbedLinks,
+                            Discord.PermissionFlagsBits.ViewChannel,
+                            Discord.PermissionFlagsBits.AttachFiles,
+                            Discord.PermissionFlagsBits.SendMessages,
+                            Discord.PermissionFlagsBits.AddReactions,
+                            Discord.PermissionFlagsBits.ReadMessageHistory,
+                        ],
+                    },
+                ],
+            },
+        );
 
-        let novaSala = await message.guild.channels.create(tag, {
-            type: 'text',
-            permissionOverwrites: [{
-                id: message.guild.id,   
-                deny: ['VIEW_CHANNEL'],
+        const denunciaEmbed = new Discord.EmbedBuilder()
+        .setColor('#237feb')
+        .setDescription(info)
+        .setTitle('🚨    [TICKET] Denúncia anônima')
+        .setThumbnail('https://media1.tenor.com/m/FrZXsAxDHhUAAAAC/sky-moth.gif')
+        .addFields(
+            {
+                name: "Evidências:", 
+                value: "Caso tenha evidências, adicione a imagem/print à sua denúncia tudo em uma única mensagem."
             },
             {
-                id: message.author.id,
-                allow: ['VIEW_CHANNEL'],
-            }]
-        });
-        
-        await novaSala.send({files: ['https://media.discordapp.net/attachments/698341432167104613/1270529662803771405/2_20240806_205028_0001.png']});
+                name: "Denúncia anônima:", 
+                value: "Não se preocupe, esta sala está oculta para todos os membros, staffs, moderadores e administradores. Apenas você ou dono podem ver esta sala."
+            },
+            {   name: "Observação:", 
+                value: "Esta sala se destruirá automaticamente e sua mensagem será enviada aos Admins e Staffs de forma anônima, ou seja, sem revelar sua identidade."
+            }
+        )
+        .setFooter({text: message.guild.name, icon_url: message.guild.iconURL({dinamic: true})});
 
-        novaSala.send(info + '\nNão se preocupe, apenas você pode ver esta sala. Ela se destruirá automaticamente e sua mensagem será enviada aos Admins de forma anônima.')
+        const closeButton = new Discord.ActionRowBuilder()
+            .addComponents(
+                new Discord.ButtonBuilder()
+                    .setCustomId('close-ticket')
+                    .setLabel('Fechar Ticket')
+                    .setStyle(Discord.ButtonStyle.Danger)
+                    .setEmoji('🔒')
+            );
+
+        await novaSala.send({ embeds: [denunciaEmbed], components: [closeButton] })
+            .then(sendedMessage => sendedMessage.pin())
             .then(() => {
                 try {
                     let filtro  = f => !f.author.bot;
@@ -48,24 +91,31 @@ exports.run = async (client, message, args) => {
                     })
 
                     coletor.on('end', async coletado => {
-                        // console.log(coletado.first().attachments.first())
-                        let resposta = await coletado.first().attachments.first(),
-                            content  = await coletado.first().content,
-                            mensagem = `<@${getID.cargo.MODERADOR}> <@${getID.cargo.STAFF}> <@${getID.cargo.ADMIN}> temos uma denúncia anônima.`;
+                        try {
+                            let anexos = coletado.first().attachments,
+                                content  = coletado.first().content,
+                                mensagem = `<@&${getID.cargo.MODERADOR}> <@&${getID.cargo.STAFF}> <@&${getID.cargo.ADMIN}> temos uma denúncia anônima.`;
+                            
+                                if (anexos && anexos.size > 0) {
+                                    anexos = anexos.map(attachment => new Discord.AttachmentBuilder(attachment.proxyURL));
+                                } else {
+                                    anexos = [];
+                                }
+                            
+                            await denRoom.send(mensagem);
+                            await denRoom.send({content, files: anexos});
                         
-                        if(resposta !== undefined)
-                            resposta = resposta.proxyURL;
-                        
-                        await denRoom.send(mensagem);
-                        await denRoom.send(content,{files: [resposta]});
-                    
-                        novaSala.delete();
+                            novaSala.delete();
+                        } catch (error) {
+                            errorLog.run({message: 'DENUNCIA_COLECTOR_ERROR:', client, error});
+                        }
                     })
                 } catch (error) {
-                    errorLog.run({message: 'DENUNCIA_ERROR:', client, error});
+                    errorLog.run({message: 'DENUNCIA_SEND_ERROR:', client, error});
                 }
             })
     } catch (error) {
+        console.log('DENUNCIA_ERROR:', error);
         errorLog.run({message: 'DENUNCIA_ERROR:', client, error});
     }
 }
