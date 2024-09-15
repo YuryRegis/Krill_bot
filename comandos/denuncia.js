@@ -1,10 +1,36 @@
 const Discord = require("discord.js");
+const config = require("../config.json");
 const getID = require("../funcoes/ids.json");
+const logMessage = require("../funcoes/logHandler");
 const errorLog = require("../funcoes/errorHandler");
-
 
 exports.run = async (client, message, args) => {
     try {
+        const hasHelperFlag = args[0] === 'ajuda' || args[0] === 'help';
+        const embedHelper = new Discord.EmbedBuilder()
+            .setColor('#237feb')
+            .setTitle('⛑️ Command Helper')
+            .setThumbnail('https://i.ibb.co/6RKGTjC/LogoTSGB.png')
+            .setDescription('Use este comando para enviar uma mensagem anônima para os administradores, staff e moderadores.')
+            .addFields(
+                {name: 'Descrição:', value: 'Envie uma mensagem anônima para os administradores, staff e moderadores do servidor.'},
+                {name: 'Maneira 1:', value: 'Um canal temporário será criando para que você adicione uma mensagem e evidências (anexos). O mesmo será excluído automaticamente ao enviar sua primeira mensagem, adicione todas as evidências em uma única mensagem.'},
+                {name: 'Maneira 2:', value: 'Envie uma mensagem simples (sem anexos) diretamente aos para os administradores, staff e moderadores do servidor sem a necessidade de criar uma sala temporária.'},
+                {name: 'Permissão:', value: 'Qualquer membro do servidor.'},
+                {name: 'Como usar:', value: `\`\`\`bash\n${config.prefix}${exports.help.name}\n\`\`\`\n\`\`\`bash\n${config.prefix}${exports.help.name} <mensagem>\n\`\`\``},
+            )
+            .setFooter({text: message.guild.name})
+        if (hasHelperFlag) {
+            message.reply({embeds: [embedHelper], ephemeral: true});
+            return message.delete();
+        }
+        const mensagem = `<@&${getID.cargo.MODERADOR}> <@&${getID.cargo.STAFF}> <@&${getID.cargo.ADMIN}> temos uma denúncia anônima.`;
+        if (args.length > 1) {
+            const msg = args.join(" ");
+            await logMessage.run({message: `${mensagem}\n\n${msg}`, client});
+            return message.delete(); 
+        }
+
         message.delete();
     
         let denRoom = await message.guild.channels.cache.get(getID.sala.DENUNCIA),
@@ -93,18 +119,14 @@ exports.run = async (client, message, args) => {
                     coletor.on('end', async coletado => {
                         try {
                             let anexos = coletado.first().attachments,
-                                content  = coletado.first().content,
-                                mensagem = `<@&${getID.cargo.MODERADOR}> <@&${getID.cargo.STAFF}> <@&${getID.cargo.ADMIN}> temos uma denúncia anônima.`;
+                                content  = coletado.first().content;                                
                             
-                                if (anexos && anexos.size > 0) {
-                                    anexos = anexos.map(attachment => new Discord.AttachmentBuilder(attachment.proxyURL));
-                                } else {
-                                    anexos = [];
-                                }
-                            
-                            await denRoom.send(mensagem);
-                            await denRoom.send({content, files: anexos});
-                        
+                            if (anexos && anexos.size > 0) {
+                                anexos = anexos.map(attachment => new Discord.AttachmentBuilder(attachment.proxyURL));
+                            } else {
+                                anexos = [];
+                            }
+                            await denRoom.send({content: `${mensagem}\n\n${content}`, files: anexos});                        
                             novaSala.delete();
                         } catch (error) {
                             errorLog.run({message: 'DENUNCIA_COLECTOR_ERROR:', client, error});
