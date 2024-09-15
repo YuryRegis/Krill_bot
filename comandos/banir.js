@@ -1,6 +1,8 @@
+const Discord = require('discord.js');
 
-
-const { ReactionCollector } = require('discord.js');
+const config = require("../config.json");
+const {run: errorLog} = require('../funcoes/errorHandler');
+const {run: logMessage} = require('../funcoes/logHandler');
 const { verificaRole }  = require('../funcoes/roles'),
       { verificaRoles } = require('../funcoes/roles'),
       { userToMember }  = require('../funcoes/members'),
@@ -14,68 +16,96 @@ exports.help = {
 
 
 exports.run = async (client, message, args) => {
-    let permAdmin = await verificaRole(message.member, getID.cargo.ADMIN),
-        permStaff = await verificaRole(message.member, getID.cargo.STAFF);
-    
-    if(!permAdmin)
-         if (!permStaff)
-            return message.reply(`você não possui permissão.`);
+    try {
+        const hasHelperFlag = args[0] === 'ajuda' || args[0] === 'help';
+        const embedHelper = new Discord.EmbedBuilder()
+            .setColor('#237feb')
+            .setTitle('⛑️ Command Helper')
+            .setThumbnail('https://i.ibb.co/6RKGTjC/LogoTSGB.png')
+            .setImage('https://media1.tenor.com/images/7129d4fbd2bd63ab987a768951ff44cb/tenor.gif')
+            .setDescription('Banir um usuário realizando menção ou inserindo o ID do mesmo.')
+            .addFields(
+                {name: 'Descrição:', value: 'O bot irá enviar uma mensagem direta justicando o ban para o usuário alvo, banindo logo em seguida.'},
+                {name: 'Observação:', value: 'Use menção apenas em canais que o usuário esteja presente. Em canais privados, utilize o ID do usuário alvo.'},
+                {name: 'Permissão:', value: 'Administradores'},
+                {name: 'Como usar:', value: `\`\`\`bash\n${config.prefix}${exports.help.name} <@pessoa OU id-da-pessoa>\n\`\`\``},
+            )
+            .setFooter({text: message.guild.name})
+        const msg = args.slice(1).join(" ");    
+        if (hasHelperFlag || !msg) {
+            await message.reply({embeds: [embedHelper], ephemeral: true});
+            return message.delete();
+        }
 
-    const salaLogs   = await client.channels.cache.get(getID.sala.LOGS),
-          salaAviso  = await client.channels.cache.get(getID.sala.AVISOS),
-          membroAlvo = await message.mentions.users.first(),
-          motivoBan  = args.slice(1).join(" ");
+        let permAdmin = await verificaRole(message.member, getID.cargo.ADMIN);
+        const permStaff = await verificaRole(message.member, getID.cargo.STAFF);
     
-    if(membroAlvo === undefined)
-        return message.reply(`não detectei nenhuma menção de usuário no comando.`);
-    
-    let membroUser = await userToMember(membroAlvo, message),
-        permAlvo   = await verificaRoles(membroUser, [getID.cargo.STAFF, getID.cargo.MODERADOR]);
-    
-    console.log(permAlvo, membroAlvo);
-    if(!permAdmin && permAlvo)
-          return message.reply(`banir membros com cargo @Staff ou @Moderador requer previlégios de Administrador.`);
-    
-    let msgMembro  = `${message.author} baniu você pelo seguinte motivo:\n\n${motivoBan}\n\n` +
-                           `Você não poderá interagir no servidor **ThatSkyGameBrasil**`,
-        nomeMembro = membroAlvo.tag;
-    
-    // Mensagem privada para o membro banido
-    await membroAlvo.send(msgMembro)
-        .then( () => salaLogs.send(`Membro ${membroAlvo} banido.\n\`\`\`MOTIVO:\n${motivoBan}\`\`\``))
-        .catch(erro => {
-            console.log(`Ban error => ${erro}`);
-            salaLogs.send(`Ban Error (Terminal):\n\`\`\`Não posso enviar mensagem privada\n\n${erro}\`\`\``);
-        });
-    
-    // Banindo membro e enviando aviso após banimento
-    await membroUser.ban({reason: motivoBan + `Você não poderá interagir no servidor TSGB`})
-        .then( async () => {
-            let cor    = '#CF3F47',
-                titulo = '**BANIDO**',
-                thumb  = 'https://i.ibb.co/FD93h6p/KRILL.png',
-                imagem = 'https://media1.tenor.com/images/7129d4fbd2bd63ab987a768951ff44cb/tenor.gif',
-                descricao = `OPA! Parece que ${nomeMembro} foi pego por um Krill !!!`,
-                embed  = await embedSimples(cor, titulo, thumb, descricao, imagem);
+        if(!permAdmin)
+            if (!permStaff)
+                return message.reply(`você não possui permissão.`);
+
+        const salaAviso  = await client.channels.cache.get(getID.sala.AVISOS),
+            memberMention = await message.mentions.users.first(),
+            motivoBan  = args.slice(1).join(" ");
+        
+        const targetId = memberMention ? memberMention.id : args[0];     
+        const membroAlvo = await message.guild.members.cache.get(targetId);
+        
+        if(!targetId)
+            return message.reply({embeds: [embedHelper], ephemeral: true});
+        
+        let membroUser = message.member,//await userToMember(membroAlvo, message),
+            permAlvo   = await verificaRoles(membroUser, [getID.cargo.STAFF, getID.cargo.MODERADOR]);
             
-            salaAviso.send(embed)
-                .then( async msg => {
-                    // Reagir a mensagem com emotes do Krill
-                    let cabeca = await client.emojis.cache.get('698231847330644068'), 
-                        corpo  = await client.emojis.cache.get('698231902993121370'), 
-                        calda  = await client.emojis.cache.get('698231942205931570');
+        if(!permAdmin && permAlvo)
+            return message.reply({embeds: [embedHelper], ephemeral: true});
 
-                    await msg.react(cabeca);
-                    await msg.react(corpo);
-                    await msg.react(calda);
-                })
-                .catch(err => salaLogs.send(`Terminal Ban\n\`\`\`${err}\`\`\``))
-        })
-        .catch(err => {
-            console.log(`Ban error => ${err}`);
-            salaLogs.send(`Terminal Ban\n\`\`\`${err}\`\`\``);
-        });
+        if(!membroAlvo) {
+            return logMessage({message: `${message.author} Membro não encontrado: \nTarget ID - ${targetId}`, client});
+        }
+        
+        let msgMembro  = `${message.author} baniu você pelo seguinte motivo:\n\n${motivoBan}\n\n` +
+                            `Você não poderá interagir no servidor **ThatSkyGameBrasil**`,
+            nomeMembro = membroUser.globalName;
+        
+        // Mensagem privada para o membro banido
+        await membroAlvo.send(msgMembro)
+            .then( () => {
+                const messageToLog = `Membro ${membroAlvo} banido.\n\`\`\`MOTIVO:\n${motivoBan}\`\`\``;
+                return logMessage({message: messageToLog, client});
+            })
+            .catch(erro => {
+                errorLog({message: 'BANIR_SEND_LOG_ERROR: ', client, erro});
+            });
+        
+        // Banindo membro e enviando aviso após banimento
+        await membroUser.ban({reason: motivoBan + `Você não poderá interagir no servidor TSGB`})
+            .then( async () => {
+                let cor    = '#CF3F47',
+                    titulo = '**USUÁRIO BANIDO**',
+                    thumb  = 'https://i.ibb.co/6RKGTjC/LogoTSGB.png',
+                    imagem = 'https://media1.tenor.com/images/7129d4fbd2bd63ab987a768951ff44cb/tenor.gif',
+                    descricao = `OPA! Parece que ${nomeMembro} foi pego por um Krill !!!`,
+                    embed  = await embedSimples(cor, titulo, thumb, descricao, imagem);
+                
+                salaAviso.send(embed)
+                    .then( async msg => {
+                        // Reagir a mensagem com emotes do Krill
+                        let cabeca = await client.emojis.cache.get('698231847330644068'), 
+                            corpo  = await client.emojis.cache.get('698231902993121370'), 
+                            calda  = await client.emojis.cache.get('698231942205931570');
 
-    message.delete();
-    return;
+                        await msg.react(cabeca);
+                        await msg.react(corpo);
+                        await msg.react(calda);
+                    })
+                    .catch(error => errorLog({message: 'BANIR_SEND_WARNING_ERROR: ', client, error}));
+            })
+            .catch(error => errorLog({message: 'BANIR_BAN_API_ERROR: ', client, error}));;
+
+        await message.delete();
+        return;
+    } catch (error) {
+        errorLog({message: 'BANIR_ERROR: ', client, error});
+    }
 }

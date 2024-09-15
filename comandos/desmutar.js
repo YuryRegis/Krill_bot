@@ -13,10 +13,6 @@ exports.help = {
 
 exports.run = async (client, message, args) => {
     try {    
-        const hasPermission = await verificaRoles(message.member, [getID.cargo.ADMIN, getID.cargo.STAFF]);
-        if(!hasPermission) {
-            return message.reply("te falta poderes para usar este comando!");
-        } 
         const hasHelperFlag = args[0] === 'ajuda' || args[0] === 'help';
         const embedHelper = new Discord.EmbedBuilder()
             .setColor('#237feb')
@@ -36,6 +32,10 @@ exports.run = async (client, message, args) => {
             return message.delete();
         } 
         
+        const hasPermission = await verificaRoles(message.member, [getID.cargo.ADMIN, getID.cargo.STAFF]);
+        if(!hasPermission) {
+            return message.reply("te falta poderes para usar este comando!");
+        } 
         // Captura pessoa mencionada na mensagem
         let alvo = await message.mentions.users.first();
         const targetId = alvo ? alvo.id : args[0];
