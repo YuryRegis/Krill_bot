@@ -1,102 +1,133 @@
 const Discord    = require("discord.js"),
 { verificaPerm } = require('../funcoes/members'),
 getID            = require('../funcoes/ids.json');
+const config = require("../config.json");
+const {run: logMessage} = require('../funcoes/logHandler');
+const {run: errorLog} = require('../funcoes/errorHandler');
 const { get } = require("request-promise-native");
 const members = require("../funcoes/members");
 
 
-
-function listeningMessage (sala, mensagem) {
+async function listeningMessage (client, sala, mensagem) {
     sala.send(mensagem)
-        .then(() => {
+        .then(() => {       
+            try {         
+                let filtro  = f => !f.author.bot && verificaPerm(f.member) && /!/.test(f);
+                let coletor = new Discord.MessageCollector(sala, filtro);
                 
-            let filtro  = f => !f.author.bot && verificaPerm(f.member) && /!/.test(f);
-            let coletor = new Discord.MessageCollector(sala, filtro);
-            
-            coletor.on('collect', async (msg, col) => {
-                let mencao = await msg.mentions.members.first(); 
-                console.log(msg.content)
+                coletor.on('collect', async (msg, col) => {
+                    let mencao = await msg.mentions.members.first(); 
 
-                if(msg.content !== undefined || mencao !== undefined)
-                    coletor.stop();
-            })
-            
-            coletor.on('end', async coletado => {
-                if (coletado === undefined)
-                    return;
+                    if(msg.content !== undefined || mencao !== undefined)
+                        coletor.stop();
+                })
                 
-                let captura = await coletado.first();
-                let membro  = await captura.mentions.members.first();
-                
-                if(membro && /!add/.test(captura.content)) {
-                    sala.overwritePermissions([
-                        {
-                            id: membro.id,
-                            allow: ['VIEW_CHANNEL'],
-                        },
-                    ], `Permissão concedida para sala ${sala}`);
+                coletor.on('end', async coletado => {
+                    try {
+                        if (!coletado || !coletado.first())
+                            return;
+                        
+                        let captura = await coletado.first();
+                        let membro  = await captura.mentions.members.first();
+                        
+                        if(membro && /!add/.test(captura.content)) {
+                            sala.permissionOverwrites.edit(membro.id, {
+                                ViewChannel: true,
+                                ReadMessageHistory: true,
+                            }, `Permissão concedida para sala ${sala}`);
 
-                    listeningMessage(sala, `Permissão concedida para ${membro}`);
-                }
-                
-                if(/!encerrar/.test(captura.content)) {
-                    let salaLogs = await captura.guild.channels.cache.get(getID.sala.LOGS);
-                    salaLogs.send(`${captura.author.tag} encerrou a sala privada ${sala.name}`);
-                    sala.delete();
-                }
-            })
-    })
-}
-
-
-exports.run = async (client, message, args) => {
-    message.delete();
-    
-    let autor   = message.author,
-        tag     = 'p_' + autor.tag + '🔐',
-        info    = `${autor} você criou um chat **privado**🔐 com <@${getID.cargo.MODERADOR}> <@${getID.cargo.STAFF}> <@${getID.cargo.ADMIN}>. `;
-    // let novaRole = await message.guild.createRole({
-    //     name: tag,
-    //     hoist: false,
-    //     mentionable: false,
-    // });
-
-    let salaLogs = await message.guild.channels.cache.get(getID.sala.LOGS);
-        
-    salaLogs.send(`${message.author} estes são os comandos válidos apenas para sala privada:` +
-            "```!add <@usuario> ==> Adiciona usuario na sala privada.\n!encerrar ==> Encerra e apaga chat privado.```");
-
-    let novaSala = await message.guild.channels.create(tag, {
-        type: 'text',
-        permissionOverwrites: [{
-            id: message.guild.id,
-            deny: ['VIEW_CHANNEL'],
-        },
-        {
-            id: message.author.id,
-            allow: ['VIEW_CHANNEL'],
-        },
-        {
-            id: getID.cargo.MODERADOR,
-            allow: ['VIEW_CHANNEL'],
-        },
-        {
-            id: getID.cargo.STAFF,
-            allow: ['VIEW_CHANNEL'],
-        },
-        {
-            id: getID.cargo.ADMIN,
-            allow: ['VIEW_CHANNEL'],
-        }]
-    })
-    
-    await novaSala.send({files:['https://pngimage.net/wp-content/uploads/2018/06/privado-png-2.png']});
-
-    listeningMessage(novaSala, info + 'O uso indevido deste comando, sem necessidade, irá gerar **advertência** e, em caso de reincidência, sujeito à **banimento**.');
-
-    return;
+                            listeningMessage(client, sala, `Permissão concedida para ${membro}`);
+                        }
+                        
+                        if(/!encerrar/.test(captura.content)) {
+                            const messageToSend = `${captura.author.username} encerrou a sala privada ${sala.name}`;
+                            await logMessage({message: messageToSend, client});
+                            sala.delete();
+                        }
+                    } catch (error) { logMessage({message: 'PRIVADO_COLETOR_ERROR:', client, error}); }
+                })
+            } catch (error) {
+                errorLog({message: 'PRIVADO_LISTENING_ERROR: ', client, error})
+            }
+        }).catch(error => {
+            errorLog({message: 'PRIVADO_LISTENING_MESSAGE_ERROR: ', client, error})
+        });
 }
 
 exports.help = {
     name: "privado"
+}
+
+exports.run = async (client, message, args) => {
+    try {
+        const hasHelperFlag = args[0] === 'ajuda' || args[0] === 'help';
+        const embedHelper = new Discord.EmbedBuilder()
+            .setColor('#237feb')
+            .setTitle('⛑️ Command Helper')
+            .setThumbnail('https://i.ibb.co/6RKGTjC/LogoTSGB.png')
+            .setDescription('Use este comando para criar uma sala privada com administradores, staff e moderadores.')
+            .addFields(
+                {name: 'Observação:', value: 'Para adicionar novos partipantes na sala, após criada, use o comando: ```bash\n!add <@usuario>```\n'},  
+                {name: 'Permissão:', value: 'Qualquer membro do servidor.'},
+                {name: 'Como usar:', value: `\`\`\`bash\n${config.prefix}${exports.help.name} <@usuario> \n\`\`\``},
+            )
+            .setFooter({text: message.guild.name})
+        if (hasHelperFlag) {
+            await message.reply({embeds: [embedHelper], ephemeral: true});
+            return message.delete();
+        }    
+        message.delete();
+        
+        let autor   = message.author,
+            tag     = 'p_' + autor.username + '🔐',
+            info    = `${autor} você criou um chat **privado**🔐 com <@&${getID.cargo.MODERADOR}> <@&${getID.cargo.STAFF}> <@&${getID.cargo.ADMIN}>. `;
+        // let novaRole = await message.guild.createRole({
+        //     name: tag,
+        //     hoist: false,
+        //     mentionable: false,
+        // });
+            
+        const messageToLog = `Estes são os comandos válidos apenas para sala privada:` +
+                "```\n!add <@usuario> ==> Adiciona usuario na sala privada.\n!encerrar ==> Encerra e apaga chat privado.\n```";
+
+        const permissionsIds = [autor.id, getID.cargo.ADMIN, getID.cargo.STAFF];
+        const allowedPermissions = permissionsIds.map(id => {
+            return { id, allow: [
+                Discord.PermissionFlagsBits.EmbedLinks,
+                Discord.PermissionFlagsBits.ViewChannel,
+                Discord.PermissionFlagsBits.AttachFiles,
+                Discord.PermissionFlagsBits.SendMessages,
+                Discord.PermissionFlagsBits.AddReactions,
+                Discord.PermissionFlagsBits.ReadMessageHistory,
+            ]}
+        });
+        const closeButton = new Discord.ActionRowBuilder()
+            .addComponents(
+                new Discord.ButtonBuilder()
+                    .setCustomId('close-ticket')
+                    .setLabel('Encerrar Sala')
+                    .setStyle(Discord.ButtonStyle.Danger)
+                    .setEmoji('🚪')
+            );
+
+        let novaSala = await message.guild.channels.create({
+            name: tag,
+            type: Discord.ChannelType.GuildText,
+            PermissionOverwrites: [
+                {
+                    id: message.guild.id,
+                    deny: [Discord.PermissionFlagsBits.ViewChannel],
+                },
+                ...allowedPermissions,
+            ],
+        })
+        const helper = await novaSala.send({content: messageToLog, components: [closeButton]});
+        await helper.pin();
+
+        listeningMessage(client, novaSala, info + 'O uso indevido deste comando, sem necessidade, irá gerar **advertência** e, em caso de reincidência, sujeito à **banimento**.');
+
+        return;
+    } catch (error) {
+        errorLog({message: 'PRIVADO_COMMAND_ERROR:', client, error});
+    }
 }
