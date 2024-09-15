@@ -4,10 +4,13 @@ const path = require('node:path');
 const Discord = require("discord.js");
 const client = new Discord.Client({intents: [53608447]});
 const getID = require('./funcoes/ids.json');
+const {run: errorLog} = require('./funcoes/errorHandler');
 const config = require("./config.json");
 const { MessageEmbed } = require("discord.js");
 const { verificaRoles } = require('./funcoes/roles'); 
 const messageHandler = require("./messageHandler.cjs");
+const {run: interactionHandler} = require("./interactionHandler.cjs");
+const {run: buttonHandler} = require("./buttonHandler.cjs");
 const { verificaPalavrao } = require('./funcoes/funcoes');
 const { setRole, rmvAddLog, mbrUPD, prsUPD } = require("./funcoes/funcoes");
 
@@ -15,15 +18,9 @@ const { setRole, rmvAddLog, mbrUPD, prsUPD } = require("./funcoes/funcoes");
 
 client.commands = new Discord.Collection(); //Cria coleção de comandos
 
-function logErro(erro) {
-	console.error(JSON.stringify(erro));
-	const salaLogs = client?.channels?.cache?.get(getID.sala.LOGS);
-	if (salaLogs) salaLogs.send(SON.stringify(erro));
-}
-
 //carregando arquivos de comandos para coleção criada
 fs.readdir("./comandos/",(erro, arquivo) => {
-	if(erro) logErro({message: '[ReadDir] Erro ao carregar lista de comandos.', erro});
+	if(erro) errorLog({message: '[ReadDir] Erro ao carregar lista de comandos.', client, erro});
 	let arquivojs = arquivo.filter(f => f.split(".").pop() == "js");
 	arquivojs.forEach((arq, i) => {
 		let prop = require(`./comandos/${arq}`);
@@ -44,7 +41,7 @@ for (const file of commandFiles) {
 		client.commands.set(command.data.name, command);
 		console.log(`Slash command ${command.data.name} carregado com sucesso.`);
 	} else {
-		logErro({message: `[WARNING] The command at ${arq} is missing a required "data" or "execute" property.`});
+		errorLog({message: `[WARNING] The command at ${command.data.name} is missing a required "data" or "execute" property.`, client});
 	}
 }
 const rest = new Discord.REST().setToken(config.token);
@@ -60,35 +57,48 @@ const rest = new Discord.REST().setToken(config.token);
 
 		console.log(`Successfully reloaded ${data.length} application (/) commands.`);
 	} catch (error) {
-		// And of course, make sure you catch and log any errors!
-		logErro({message: '[REST] Erro ao carregar lista slash commands.', error});
+		errorLog({message: '[REST] Erro ao carregar lista slash commands.', client, error});
 	}
 })();
 
 
 client.on("ready", () => {
-    console.log(`Bot iniciado! ${client.users.size} usuários, ${client.channels.size} canais e ${client.guilds.size} servidores.`);
-	client.user.setActivity(`Sky: Filhos da luz`);
-})
+	try {
+		console.log(`Bot iniciado! ${client.users.cache.size} usuários, ${client.channels.cache.size} canais e ${client.guilds.cache.size} servidores.`);
+		client.user.setActivity(`Sky: Filhos da luz`);
+	} catch (error) {
+		errorLog({message: 'READY_EVENT_ERROR:', client, error});
+	}
+});
 
 
 client.on(Discord.Events.InteractionCreate, async interaction => {
-	if (!interaction.isChatInputCommand()) return;
-	const command = interaction.client.commands.get(interaction.commandName);
-
-	if (!command) {
-		console.error(`No command matching ${interaction.commandName} was found.`);
-		return;
-	}
-
 	try {
+		if (interaction.isStringSelectMenu()) {
+			return interactionHandler(client, interaction);
+		};
+		if (interaction.isButton()) {
+			return buttonHandler(client, interaction);
+		}
+		if (!interaction.isChatInputCommand()) return;
+
+		const command = interaction.client.commands.get(interaction.commandName);
+
+		if (!command) {
+			return logError({
+				client, 
+				message: 'INTERACTION_CREATE_EVENT_ERROR:', 
+				error: `No command matching ${interaction.commandName} was found.`
+			});
+		}
 		await command.execute(interaction);
 	} catch (error) {
 		console.error(error);
+		logError({message: 'INTERACTION_CREATE_EVENT_ERROR:', client, error});
 		if (interaction.replied || interaction.deferred) {
-			await interaction.followUp({ content: 'There was an error while executing this command!', ephemeral: true });
+			await interaction.followUp({ content: 'There was an error while executing this command!', ephemeral: false });
 		} else {
-			await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
+			await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: false });
 		}
 	}
 });
@@ -191,15 +201,22 @@ client.on("messageCreate", async message => {
 	}
 });
 
-
 client.on("guildMemberAdd", async member => {
-	newmember.run(member, client);
+	try { 
+		newmember.run(member, client);
+	} catch (error) {
+		errorLog({message: 'GUILD_MEMBER_ADD_ERROR:', client, error});
+	}
 });
 
 
 client.on('messageReactionAdd', (reaction, user) => {
-	if (user.bot) return;
-	//reactionHandler.run(reaction, user);
+	try {
+		if (user.bot) return;
+		//reactionHandler.run(reaction, user);
+	} catch (error) {
+		errorLog({message: 'REACTION_ADD_ERROR:', client, error});
+	}
 })
 
 

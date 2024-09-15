@@ -51,12 +51,14 @@ module.exports = {
     // verifica presence update (status de presença)
     prsUPD: async function(data, client){
         try {
-            if(data.d.game !== null) {            
-                let state = data.d.game.state;
-                if (state === undefined) return null;
+            const dataGame = data.d.game;
+            if(dataGame) {            
+                let state = dataGame?.state;
+                if (!state) return null;
+                console.log('PRS_UPD_STATE >>>>', JSON.stringify(state));
                 if(regex.test(state.toLowerCase())) {
-                    let alvoID   = data.d.user.id,
-                        alvo     = await client.users.cache.get(data.d.user.id),
+                    let alvoID   = data?.d?.user?.id,
+                        alvo     = await client?.users?.cache?.get(data?.d?.user?.id),
                         palavrao = await state.match(regex),
                         msg      = `Pessoal, encontrei uma ** *RichPresence* **suspeita, poderiam verificar?\n`,
                         terminal = msg + `\`\`\`Membro:   ${alvo.tag}\nNome:     ${alvo.username}\nID:       ${alvoID}\nSuspeita: ${palavrao}\nPresence: ${state}\`\`\``;
@@ -65,7 +67,7 @@ module.exports = {
                 }
             }   
         } catch (error) { 
-            console.error('PRS_UPD_ERROR:', JSON.stringify(error)); 
+            console.error('PRS_UPD_ERROR:', error); 
         }
         finally {
             return null;

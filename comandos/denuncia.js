@@ -1,5 +1,6 @@
 const Discord = require("discord.js");
 const getID = require("../funcoes/ids.json");
+const errorLog = require("../funcoes/errorHandler");
 
 
 exports.run = async (client, message, args) => {
@@ -61,14 +62,11 @@ exports.run = async (client, message, args) => {
                         novaSala.delete();
                     })
                 } catch (error) {
-                    console.error('DENUNCIA_ERROR:', JSON.stringify(error));
-                    logRoom.send(`DENUNCIA_ERROR: ${error}`);
+                    errorLog.run({message: 'DENUNCIA_ERROR:', client, error});
                 }
             })
     } catch (error) {
-        console.error('DENUNCIA_ERROR:', JSON.stringify(error));
-        let alertRoom = await message.guild.channels.cache.get(getID.sala.AVISOS);
-        alertRoom.send(`DENUNCIA_ERROR: ${error}`);
+        errorLog.run({message: 'DENUNCIA_ERROR:', client, error});
     }
 }
 
