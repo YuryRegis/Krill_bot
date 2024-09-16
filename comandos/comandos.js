@@ -14,7 +14,6 @@ exports.run = async (client, message, args) => {
             .setColor('#237feb')
             .setTitle('⛑️ Command Helper')
             .setThumbnail('https://i.ibb.co/6RKGTjC/LogoTSGB.png')
-            .setImage('https://media1.tenor.com/images/7129d4fbd2bd63ab987a768951ff44cb/tenor.gif')
             .setDescription('Lista todos os comandos de texto disponívels.')
             .addFields(
                 {name: 'Descrição:', value: 'O bot irá listar todos os comandos de texto dispníveis.'},
