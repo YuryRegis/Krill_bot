@@ -1,17 +1,16 @@
-const Discord    = require("discord.js"),
-{ verificaPerm } = require('../funcoes/members'),
-getID            = require('../funcoes/ids.json');
-const config = require("../config.json");
+const Discord    = require("discord.js");
+
+const { verificaPerm } = require('../funcoes/members');
 const {run: logMessage} = require('../funcoes/logHandler');
 const {run: errorLog} = require('../funcoes/errorHandler');
-const { get } = require("request-promise-native");
-const members = require("../funcoes/members");
+const {rolesCollection} = require('../models/roles');
+const config = require("../config.json");
 
 
 async function listeningMessage (client, sala, mensagem) {
     sala.send(mensagem)
         .then(() => {       
-            try {         
+            try {
                 let filtro  = f => !f.author.bot && verificaPerm(f.member) && /!/.test(f);
                 let coletor = new Discord.MessageCollector(sala, filtro);
                 
@@ -61,6 +60,8 @@ exports.help = {
 
 exports.run = async (client, message, args) => {
     try {
+        const rolesIds = await rolesCollection();
+
         const hasHelperFlag = args[0] === 'ajuda' || args[0] === 'help';
         const embedHelper = new Discord.EmbedBuilder()
             .setColor('#237feb')
@@ -81,7 +82,7 @@ exports.run = async (client, message, args) => {
         
         let autor   = message.author,
             tag     = 'p_' + autor.username + '🔐',
-            info    = `${autor} você criou um chat **privado**🔐 com <@&${getID.cargo.MODERADOR}> <@&${getID.cargo.STAFF}> <@&${getID.cargo.ADMIN}>. `;
+            info    = `${autor} você criou um chat **privado**🔐 com <@&${rolesIds.MODERADOR}> <@&${rolesIds.STAFF}> <@&${rolesIds.ADMIN}>. `;
         // let novaRole = await message.guild.createRole({
         //     name: tag,
         //     hoist: false,
@@ -91,7 +92,7 @@ exports.run = async (client, message, args) => {
         const messageToLog = `Estes são os comandos válidos apenas para sala privada:` +
                 "```\n!add <@usuario> ==> Adiciona usuario na sala privada.\n!encerrar ==> Encerra e apaga chat privado.\n```";
 
-        const permissionsIds = [autor.id, getID.cargo.ADMIN, getID.cargo.STAFF];
+        const permissionsIds = [autor.id, rolesIds.ADMIN, rolesIds.STAFF];
         const allowedPermissions = permissionsIds.map(id => {
             return { id, allow: [
                 Discord.PermissionFlagsBits.EmbedLinks,

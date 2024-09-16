@@ -12,7 +12,9 @@ const {run: interactionHandler} = require("./interactionHandler.cjs");
 const {run: buttonHandler} = require("./buttonHandler.cjs");
 const { verificaPalavrao } = require('./funcoes/funcoes');
 const { setRole, rmvAddLog, mbrUPD, prsUPD } = require("./funcoes/funcoes");
-
+const { channelsCollection, updatechannels } = require("./models/channels");
+const { rolesCollection } = require("./models/roles");
+const {configIdHandler} = require("./funcoes/configIdHandler.cjs");
 
 
 client.commands = new Discord.Collection(); //Cria coleção de comandos
@@ -79,6 +81,9 @@ client.on(Discord.Events.InteractionCreate, async interaction => {
 		if (interaction.isButton()) {
 			return buttonHandler(client, interaction);
 		}
+		if (interaction.isModalSubmit()) {
+			return configIdHandler(client, interaction);
+		}
 		if (!interaction.isChatInputCommand()) return;
 
 		const command = interaction.client.commands.get(interaction.commandName);
@@ -124,7 +129,8 @@ client.on("guildDelete", guild => {
 
 client.on("raw", async data => {
 	try {
-		let regrasID   = getID.sala.REGRAS,
+		const channelsIds = await channelsCollection();
+		let regrasID   = channelsIds.REGRAS,
 			servidorID = getID.SERVIDOR;
 
 		if(data.t === "MESSAGE_REACTION_ADD" || data.t === "MESSAGE_REACTION_REMOVE") {
@@ -133,7 +139,7 @@ client.on("raw", async data => {
 			return;
 		}
 
-		let salaLogs = await client.channels.cache.get(getID.sala.LOGS);
+		let salaLogs = await client.channels.cache.get(channelsIds.LOGS);
 		
 		if(data.t === 'GUILD_MEMBER_REMOVE' || data.t === 'GUILD_MEMBER_ADD') {
 			let resposta = "";
@@ -163,6 +169,9 @@ client.on("raw", async data => {
 
 client.on("messageCreate", async message => {
 	try {
+		const rolesIds = await rolesCollection();
+		const channelsIds = await channelsCollection();
+
 		// verifica se é uma mensagem do bot
 		if (message.author.bot) return;
 		
@@ -170,16 +179,16 @@ client.on("messageCreate", async message => {
 		if(message.channel.type === "dm") return; 
 
 		// console.log('MENSAGEM >>>>', message);
-		let mais18   = getID.sala.MAIS18,
+		let mais18   = channelsIds.MAIS18,
 			salatual = message.channel.id,
 			mbr      = message.member;
 		
 		if(salatual !== mais18) {
 			const palavroes = await verificaPalavrao(message);
-			const permissao = await verificaRoles(mbr, [getID.cargo.ADMIN,getID.cargo.STAFF,getID.cargo.MODERADOR]);
+			const permissao = await verificaRoles(mbr, [rolesIds.ADMIN, rolesIds.STAFF, rolesIds.MODERADOR]);
 			
 			if(palavroes && !permissao) {
-				let salaAviso = await message.guild.channels.cache.get(getID.sala.LOGS),
+				let salaAviso = await message.guild.channels.cache.get(channelsIds.LOGS),
 					origem    = await message.guild.channels.cache.get(salatual);
 
 				salaAviso.send(`Detectei uma palavra de baixo calão ou na sala ${origem}\`\`\`

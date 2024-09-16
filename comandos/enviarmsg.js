@@ -3,9 +3,9 @@ const Discord = require('discord.js');
 const config = require("../config.json");
 const { run: errorLog } = require('../funcoes/errorHandler');
 const { run: logMessage } = require('../funcoes/logHandler');
-const { MessageEmbed, MessageCollector } = require('discord.js'),
-    { verificaPerm } = require('../funcoes/members'),
-    getID = require('../funcoes/ids.json');
+const { MessageCollector } = require('discord.js'),
+    { verificaPerm } = require('../funcoes/members');
+const {channelsCollection} = require('../models/channels');
 
 exports.help = {
     name: "enviarmsg",
@@ -14,6 +14,8 @@ exports.help = {
 
 exports.run = async (client, message, args) => {
     try {
+        const channelsIds = await channelsCollection();
+
         const hasHelperFlag = args[0] === 'ajuda' || args[0] === 'help';
         const hasPermission = await verificaPerm(message.member);
         const embedHelper = new Discord.EmbedBuilder()
@@ -47,7 +49,7 @@ exports.run = async (client, message, args) => {
                 'Envie uma thumbnail (digite "\`nada\`" para mensagem sem thumbnail):'
             ];
 
-        const salaLogs = await message.guild.channels.cache.get(getID.sala.LOGS2),
+        const salaLogs = await message.guild.channels.cache.get(channelsIds.LOGS2),
             author = await message.author,
             avatar = await message.guild.members.resolve(author.id).user.avatarURL();
 

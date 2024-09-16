@@ -1,9 +1,10 @@
 const Discord = require("discord.js");      
 const config  = require("../config.json");
-const { verificaRoles } = require('../funcoes/roles'),
-      getID            = require('../funcoes/ids.json');
+const { verificaRoles } = require('../funcoes/roles');
 const {run: errorLog} = require('../funcoes/errorHandler');
 const {run: logMessage} = require('../funcoes/logHandler');
+const {rolesCollection} = require('../models/roles');
+
 
 exports.help = {
     name: "enviarpv",
@@ -12,6 +13,8 @@ exports.help = {
 
 exports.run = async (client, message, args) => {
    try {
+        const rolesIds = await rolesCollection();
+        
         const hasHelperFlag = args[0] === 'ajuda' || args[0] === 'help';
         const embedHelper = new Discord.EmbedBuilder()
             .setColor('#237feb')
@@ -32,7 +35,7 @@ exports.run = async (client, message, args) => {
         }
         await message.delete();
         
-        if(verificaRoles(message.member, [getID.cargo.ADMIN, getID.cargo.STAFF])) {
+        if(verificaRoles(message.member, [rolesIds.ADMIN, rolesIds.STAFF])) {
             let mensaoUsuario = /@/;
             let canal = await message.channel;
 
@@ -63,7 +66,7 @@ exports.run = async (client, message, args) => {
                 logMessage({message: messageToReply, client});
             }
         } else {
-            return message.reply(`Apenas <@&${getID.cargo.ADMIN}> ou <@&${getID.cargo.STAFF}> podem usar este comando.`);
+            return message.reply(`Apenas <@&${rolesIds.ADMIN}> ou <@&${rolesIds.STAFF}> podem usar este comando.`);
         }
    } catch (error) {
         errorLog({message: 'ENVIARPV_ERROR: ', client, error});

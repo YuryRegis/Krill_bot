@@ -4,8 +4,9 @@ const Discord = require('discord.js');
 const { verificaRole, verificaRoles } = require('../funcoes/roles');
 const {run: logMessage} = require('../funcoes/logHandler');
 const {run: errorLog} = require('../funcoes/errorHandler');
-const getID = require('../funcoes/ids.json');
+const {rolesCollection} = require('../models/roles');
 const config = require("../config.json");
+
 
 exports.help = {
     name: "desmutar",
@@ -13,7 +14,9 @@ exports.help = {
 }
 
 exports.run = async (client, message, args) => {
-    try {    
+    try {
+        const rolesIds = await rolesCollection();
+        
         const hasHelperFlag = args[0] === 'ajuda' || args[0] === 'help';
         const embedHelper = new Discord.EmbedBuilder()
             .setColor('#237feb')
@@ -33,7 +36,7 @@ exports.run = async (client, message, args) => {
             return message.delete();
         } 
         
-        const hasPermission = await verificaRoles(message.member, [getID.cargo.ADMIN, getID.cargo.STAFF]);
+        const hasPermission = await verificaRoles(message.member, [rolesIds.ADMIN, rolesIds.STAFF]);
         if(!hasPermission) {
             return message.reply("te falta poderes para usar este comando!");
         } 
@@ -43,7 +46,7 @@ exports.run = async (client, message, args) => {
         var rebelde = await message.guild.members.cache.get(targetId);
         
         // Verifica se ela foi silenciada
-        let id = getID.cargo.SILENCIADOS;
+        let id = rolesIds.SILENCIADOS;
         if (await verificaRole(rebelde, id)) {
             await rebelde.roles.remove(id);
             

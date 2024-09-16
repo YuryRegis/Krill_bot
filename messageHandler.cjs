@@ -1,11 +1,16 @@
-const getID = require('./funcoes/ids.json');
-    //  const { verificaVIP }   = require('./comandos/assets/loto/ticket');
+//  const { verificaVIP }   = require('./comandos/assets/loto/ticket');
 const { verificaRole, verificaRoles } = require('./funcoes/roles');
 const errorLog = require('./funcoes/errorHandler');
 const logMessage = require('./funcoes/logHandler');
+const {channelsCollection} = require('./models/channels');
+const {rolesCollection} = require('./models/roles');
+
 
 exports.run = async (message, queue, client) => {
 	try {
+		const channelsIds = await channelsCollection();
+		const rolesIds = await rolesCollection();
+
 		if (!message || !queue || !client) return;
 
 		const 	config         = require("./config.json"),
@@ -18,9 +23,9 @@ exports.run = async (message, queue, client) => {
 			ch      = message?.channel?.name?.toString();
 		
 		//Restringindo canal comandos_bot
-		if(message?.channel?.id === getID.sala.CMDBOT) {
+		if(message?.channel?.id === channelsIds.CMDBOT) {
 			
-			let permissao = await verificaRole(message?.member, getID.cargo.ADMIN);
+			let permissao = await verificaRole(message?.member, rolesIds.ADMIN);
 			if(!permissao) {
 				console.log(`usuário não permitido. Apagando mensagem de ${sender}...`)	
 				message.delete();
@@ -29,8 +34,8 @@ exports.run = async (message, queue, client) => {
 		}
 
 		//restringindo chat nos canais de imagens e vídeos	
-		if(message?.channel?.id === getID.sala.FOTOS || message?.channel?.id === getID.sala.FOTOSBETA) {
-			let permissao = await verificaRoles(message?.member, [getID.cargo.ADMIN, getID.cargo.STAFF, getID.cargo.MODERADOR]);
+		if(message?.channel?.id === channelsIds.FOTOS || message?.channel?.id === channelsIds.FOTOSBETA) {
+			let permissao = await verificaRoles(message?.member, [rolesIds.ADMIN, rolesIds.STAFF, rolesIds.MODERADOR]);
 			if(!permissao && !message?.author?.bot) { //verifica roles
 				if(message?.embeds?.length > 0) return;
 				if(message?.attachments?.size == 0) { 	//verificando se é um link válido
@@ -68,7 +73,7 @@ exports.run = async (message, queue, client) => {
 		//filtrar menções here e everyone
 		if(message?.mentions?.everyone) {
 			//verifica se é Admin ou Staff e notifica no cosole quem e onde usou @Everyone
-			let permissao = await verificaRoles(message?.member, [getID.cargo.ADMIN, getID.cargo.STAFF, getID.cargo.MODERADOR]);
+			let permissao = await verificaRoles(message?.member, [rolesIds.ADMIN, rolesIds.STAFF, rolesIds.MODERADOR]);
 			if(permissao || sender.bot)
 				return console.log(`${usuario} notificou todos em uma mensagem em ${ch}.`);        
 			

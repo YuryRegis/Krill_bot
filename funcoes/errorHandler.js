@@ -1,7 +1,9 @@
-const getID = require('./ids.json');
+const {channelsCollection} = require('../models/channels');
 
 exports.run = async payload => {
     try {
+        const channelsIds = await channelsCollection();
+        
         const error = payload.error;
         const client = payload.client;
         const message = payload.message;
@@ -13,7 +15,7 @@ exports.run = async payload => {
         const errorMessage = isNotEmptyObject ? parsedJsonError : error;
         
         console.error(message, errorMessage);
-        await client.channels.cache.get(getID.sala.LOGS).send(`${message}: ${error}`);
+        await client.channels.cache.get(channelsIds.LOGS).send(`${message}: ${error}`);
     } catch (error) {
         console.error(payload?.message, payload?.error);
     }

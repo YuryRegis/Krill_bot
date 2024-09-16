@@ -1,9 +1,9 @@
 const Discord = require('discord.js');
 
-const getID      = require('../funcoes/ids.json'),
-{ verificaRole, verificaRoles } = require('../funcoes/roles');
+const { verificaRole, verificaRoles } = require('../funcoes/roles');
 const {run: logMessage} = require('../funcoes/logHandler');
-const {run: errorLog} = require('../funcoes/errorHandler');  
+const {run: errorLog} = require('../funcoes/errorHandler');
+const {rolesCollection} = require('../models/roles');  
 const config = require("../config.json");
 
 exports.help = {
@@ -13,6 +13,8 @@ exports.help = {
 
 exports.run = async (client, message, args) => {
     try {
+        const rolesIds = await rolesCollection();
+        
         const hasHelperFlag = args[0] === 'ajuda' || args[0] === 'help';
         const embedHelper = new Discord.EmbedBuilder()
             .setColor('#237feb')
@@ -27,7 +29,7 @@ exports.run = async (client, message, args) => {
             )
             .setFooter({text:`${message.guild.name} - Tudo sobre Sky`});
 
-        if(await verificaRoles(message.member, [getID.cargo.ADMIN, getID.cargo.STAFF])) {
+        if(await verificaRoles(message.member, [rolesIds.ADMIN, rolesIds.STAFF])) {
             
             // Captura pessoa mencionada na mensagem
             let alvo = await message.mentions.users.first();
@@ -41,7 +43,7 @@ exports.run = async (client, message, args) => {
             }
 
             // verifica se usuario já não esta silenciado
-            if (await verificaRole(rebelde, getID.cargo.SILENCIADOS)) 
+            if (await verificaRole(rebelde, rolesIds.SILENCIADOS)) 
                 return message.reply(`${rebelde.displayName} já se encontra silenciado...`)
 
             await rebelde.send(`${message.author} silenciou você pelo seguinte motivo:\n` + 
@@ -53,7 +55,7 @@ exports.run = async (client, message, args) => {
                     errorLog({message: errMessage, client, error: err});
                 });
                 
-            // await rebelde.roles.set([getID.cargo.SILENCIADOS]); // Define role "Silenciados" para o usuario
+            // await rebelde.roles.set([rolesIds.SILENCIADOS]); // Define role "Silenciados" para o usuario
             await message.delete();
             const messageToLog = `${message.author} silenciou ${rebelde.displayName} usando o bot.`; 
             return logMessage({message: messageToLog, client});

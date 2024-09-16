@@ -1,14 +1,16 @@
 const Discord = require('discord.js');
 
-const getID = require('./ids.json');
 const {run: errorLog} = require('./errorHandler');
 const {run: logHandler} = require('./logHandler');
+const {rolesCollection} = require('../models/roles');
 
 async function createTicketChannel(client, interaction, name) {
     try {
+        const rolesIds = await rolesCollection();
+
         const userId = interaction.user.id;
         const userTag = interaction.user.username;
-        const permissionsIds = [userId, getID.cargo.ADMIN, getID.cargo.STAFF];
+        const permissionsIds = [userId, rolesIds.ADMIN, rolesIds.STAFF];
 
         const allowedPermissions = permissionsIds.map(id => {
             return { id, allow: [

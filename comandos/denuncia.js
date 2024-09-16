@@ -1,11 +1,16 @@
 const Discord = require("discord.js");
 const config = require("../config.json");
-const getID = require("../funcoes/ids.json");
 const logMessage = require("../funcoes/logHandler");
 const errorLog = require("../funcoes/errorHandler");
+const {rolesCollection} = require('../models/roles');
+const {channelsCollection} = require('../models/channels');
+
 
 exports.run = async (client, message, args) => {
     try {
+        const channelsIds = await channelsCollection();
+        const rolesIds = await rolesCollection();
+
         const hasHelperFlag = args[0] === 'ajuda' || args[0] === 'help';
         const embedHelper = new Discord.EmbedBuilder()
             .setColor('#237feb')
@@ -24,7 +29,7 @@ exports.run = async (client, message, args) => {
             message.reply({embeds: [embedHelper], ephemeral: true});
             return message.delete();
         }
-        const mensagem = `<@&${getID.cargo.MODERADOR}> <@&${getID.cargo.STAFF}> <@&${getID.cargo.ADMIN}> temos uma denúncia anônima.`;
+        const mensagem = `<@&${rolesIds.MODERADOR}> <@&${rolesIds.STAFF}> <@&${rolesIds.ADMIN}> temos uma denúncia anônima.`;
         if (args.length > 1) {
             const msg = args.join(" ");
             await logMessage.run({message: `${mensagem}\n\n${msg}`, client});
@@ -33,7 +38,7 @@ exports.run = async (client, message, args) => {
 
         message.delete();
     
-        let denRoom = await message.guild.channels.cache.get(getID.sala.DENUNCIA),
+        let denRoom = await message.guild.channels.cache.get(channelsIds.DENUNCIA),
             autor   = message.author,
             info    = `${autor.globalName} explique detalhadamente sua denúncia`;
         // let novaRole = await message.guild.createRole({

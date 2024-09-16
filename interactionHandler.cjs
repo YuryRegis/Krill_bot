@@ -1,5 +1,7 @@
 const errorLog = require('./funcoes/errorHandler');
 const {run: ticketHandler} = require('./funcoes/ticketHandler');
+const {configIdModal} = require('./funcoes/configIdHandler.cjs');
+
 
 exports.run = async (client, interaction) => {
     try {
@@ -7,6 +9,10 @@ exports.run = async (client, interaction) => {
             case 'ticket':
                 await ticketHandler(client, interaction);
                 break;
+            case 'set-roles':
+            case 'set-channels':
+                await configIdModal(client, interaction);
+                break
             default:
                 break;
         }

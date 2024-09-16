@@ -1,40 +1,47 @@
-const getID = require('../funcoes/ids.json');
 const {run: errorLog} = require('../funcoes/errorHandler');
+const {rolesCollection} = require('../models/roles');
+
 
 module.exports = {
 
     // defjne o cargo ao reagir mensagem no canal de regras
     setRole: async function(client, data, servidorID) {
-        let servidor = await client.guilds.cache.get(servidorID);
-        let membro   = await servidor.members.cache.get(data.d.user_id);
+        try {
+            const rolesIds = await rolesCollection();
 
-        let android  = await servidor.roles.cache.get(getID.cargo.ANDROID),
-            nintendo = await servidor.roles.cache.get(getID.cargo.SWITCH),
-            apple    = await servidor.roles.cache.get(getID.cargo.APPLE),
-            beta     = await servidor.roles.cache.get(getID.cargo.BETA),
-            skyG     = await servidor.roles.cache.get(getID.cargo.GLOBAL);
+            let servidor = await client.guilds.cache.get(servidorID);
+            let membro   = await servidor.members.cache.get(data.d.user_id);
 
-        if(data.t === "MESSAGE_REACTION_ADD" || data.t === "MESSAGE_REACTION_REMOVE") {
-            if(data.d.emoji.id === "698184753848778883") { 
-                if(membro.roles.cache.has(android)) return
-                (data.t === "MESSAGE_REACTION_ADD") ? membro.roles.add(android) : membro.roles.remove(android);
-            } 
-            else if(data.d.emoji.id === "698184635724857445") {
-                if(membro.roles.cache.has(apple)) return
-                (data.t === "MESSAGE_REACTION_ADD") ? membro.roles.add(apple) : membro.roles.remove(apple);
+            let android  = await servidor.roles.cache.get(rolesIds.ANDROID),
+                nintendo = await servidor.roles.cache.get(rolesIds.SWITCH),
+                apple    = await servidor.roles.cache.get(rolesIds.APPLE),
+                beta     = await servidor.roles.cache.get(rolesIds.BETA),
+                skyG     = await servidor.roles.cache.get(rolesIds.GLOBAL);
+
+            if(data.t === "MESSAGE_REACTION_ADD" || data.t === "MESSAGE_REACTION_REMOVE") {
+                if(data.d.emoji.id === "698184753848778883") { 
+                    if(membro.roles.cache.has(android)) return
+                    (data.t === "MESSAGE_REACTION_ADD") ? membro.roles.add(android) : membro.roles.remove(android);
+                } 
+                else if(data.d.emoji.id === "698184635724857445") {
+                    if(membro.roles.cache.has(apple)) return
+                    (data.t === "MESSAGE_REACTION_ADD") ? membro.roles.add(apple) : membro.roles.remove(apple);
+                }
+                else if(data.d.emoji.name === "🛠️") {
+                    if(membro.roles.cache.has(beta)) return
+                    (data.t === "MESSAGE_REACTION_ADD") ? membro.roles.add(beta) : membro.roles.remove(beta);
+                }
+                else if(data.d.emoji.name === "🌐") {
+                    if(membro.roles.cache.has(skyG)) return
+                    (data.t === "MESSAGE_REACTION_ADD") ? membro.roles.add(skyG) : membro.roles.remove(skyG);
+                }
+                else if(data.d.emoji.name === "🎮") {
+                    if(membro.roles.cache.has(skyG)) return
+                    (data.t === "MESSAGE_REACTION_ADD") ? membro.roles.add(nintendo) : membro.roles.remove(nintendo);
+                }
             }
-            else if(data.d.emoji.name === "🛠️") {
-                if(membro.roles.cache.has(beta)) return
-                (data.t === "MESSAGE_REACTION_ADD") ? membro.roles.add(beta) : membro.roles.remove(beta);
-            }
-            else if(data.d.emoji.name === "🌐") {
-                if(membro.roles.cache.has(skyG)) return
-                (data.t === "MESSAGE_REACTION_ADD") ? membro.roles.add(skyG) : membro.roles.remove(skyG);
-            }
-             else if(data.d.emoji.name === "🎮") {
-                if(membro.roles.cache.has(skyG)) return
-                (data.t === "MESSAGE_REACTION_ADD") ? membro.roles.add(nintendo) : membro.roles.remove(nintendo);
-            }
+        } catch(error) {
+            errorLog({message: 'SET_ROLE_ERROR:', client, error});
         }
     },
 

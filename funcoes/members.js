@@ -1,17 +1,16 @@
-const { verificaRoles } = require('../funcoes/roles'),
-      getID            = require('../funcoes/ids.json');
+const { verificaRoles } = require('../funcoes/roles');
+const {rolesCollection} = require('../models/roles');
 
 
 module.exports = {
-
     verificaPerm: async function(member) {
-        
-        if( await verificaRoles(member, [getID.cargo.ADMIN, getID.cargo.STAFF, getID.cargo.MODERADOR]) )
+        const rolesIds = await rolesCollection();
+
+        if( await verificaRoles(member, [rolesIds.ADMIN, rolesIds.STAFF, rolesIds.MODERADOR]) )
              return true;
         else
             return false;
     },
-
 
     // recebe um tipo User e retorna um guildMember.
     userToMember: async function (user, message) {  

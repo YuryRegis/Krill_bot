@@ -3,11 +3,12 @@ const Discord = require('discord.js');
 const config = require("../config.json");
 const {run: errorLog} = require('../funcoes/errorHandler');
 const {run: logMessage} = require('../funcoes/logHandler');
+const {channelsCollection} = require('../models/channels');
+const {rolesCollection} = require('../models/roles');
+
 const { verificaRole }  = require('../funcoes/roles'),
       { verificaRoles } = require('../funcoes/roles'),
-      { embedSimples }  = require('../funcoes/messages'),
-      getID             = require('../funcoes/ids.json');
-
+      { embedSimples }  = require('../funcoes/messages');
 
 exports.help = {
     name: "banir",
@@ -17,6 +18,9 @@ exports.help = {
 
 exports.run = async (client, message, args) => {
     try {
+        const channelsIds = await channelsCollection();
+        const rolesIds = await rolesCollection();
+
         const hasHelperFlag = args[0] === 'ajuda' || args[0] === 'help';
         const embedHelper = new Discord.EmbedBuilder()
             .setColor('#237feb')
@@ -37,14 +41,14 @@ exports.run = async (client, message, args) => {
             return message.delete();
         }
 
-        let permAdmin = await verificaRole(message.member, getID.cargo.ADMIN);
-        const permStaff = await verificaRole(message.member, getID.cargo.STAFF);
+        let permAdmin = await verificaRole(message.member, rolesIds.ADMIN);
+        const permStaff = await verificaRole(message.member, rolesIds.STAFF);
     
         if(!permAdmin)
             if (!permStaff)
-                return message.reply(`você não possui permissão.`);
+                return message.reply(`Te falta **poderes** para executar este comando.\nUse \`!${config.prefix}${exports.help.name} ajuda\` para consultar permissões.`);
 
-        const salaAviso  = await client.channels.cache.get(getID.sala.AVISOS),
+        const salaAviso  = await client.channels.cache.get(channelsIds.AVISOS),
             memberMention = await message.mentions.users.first(),
             motivoBan  = args.slice(1).join(" ");
         
@@ -55,7 +59,7 @@ exports.run = async (client, message, args) => {
             return message.reply({embeds: [embedHelper], ephemeral: true});
         
         let membroUser = message.member,//await userToMember(membroAlvo, message),
-            permAlvo   = await verificaRoles(membroUser, [getID.cargo.STAFF, getID.cargo.MODERADOR]);
+            permAlvo   = await verificaRoles(membroUser, [rolesIds.STAFF, rolesIds.MODERADOR]);
             
         if(!permAdmin && permAlvo)
             return message.reply({embeds: [embedHelper], ephemeral: true});

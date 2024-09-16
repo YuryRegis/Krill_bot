@@ -14,7 +14,7 @@ module.exports = {
                 .setTitle('Alô suporte! ☎')
                 .setThumbnail('https://i.ibb.co/6RKGTjC/LogoTSGB.png')
                 .setDescription('Abra um chamado para fazer uma denúncia, crítica ou sugestão.')
-                .setFooter({text: interaction.guild.name, icon_url: interaction.guild.iconURL({dinamic: true})});
+                .setFooter({text:`${interaction.guild.name} - Tudo sobre Sky`});
                 
             const menuDisplay = new Discord.ActionRowBuilder()
                 .addComponents(
