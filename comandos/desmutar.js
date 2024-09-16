@@ -25,7 +25,7 @@ exports.run = async (client, message, args) => {
                 {name: 'Permissão:', value: 'Administradores e Staffs'},
                 {name: 'Como usar:', value: `\`\`\`bash\n${config.prefix}${exports.help.name} <@pessoa OU id-da-pessoa>\n\`\`\``},
             )
-            .setFooter({text: message.guild.name})
+            .setFooter({text:`${message.guild.name} - Tudo sobre Sky`});
 
         if (hasHelperFlag) {
             await message.reply({embeds: [embedHelper], ephemeral: true});

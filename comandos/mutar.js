@@ -24,7 +24,7 @@ exports.run = async (client, message, args) => {
                 {name: 'Permissão:', value: 'Administradores e Staffs'},
                 {name: 'Como usar:', value: `\`\`\`bash\n${config.prefix}${exports.help.name} <@pessoa OU id-da-pessoa> <motivo>\n\`\`\``},
             )
-            .setFooter({text: message.guild.name})
+            .setFooter({text:`${message.guild.name} - Tudo sobre Sky`});
 
         if(await verificaRoles(message.member, [getID.cargo.ADMIN, getID.cargo.STAFF])) {
             

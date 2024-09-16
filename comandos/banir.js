@@ -5,7 +5,6 @@ const {run: errorLog} = require('../funcoes/errorHandler');
 const {run: logMessage} = require('../funcoes/logHandler');
 const { verificaRole }  = require('../funcoes/roles'),
       { verificaRoles } = require('../funcoes/roles'),
-      { userToMember }  = require('../funcoes/members'),
       { embedSimples }  = require('../funcoes/messages'),
       getID             = require('../funcoes/ids.json');
 
@@ -30,7 +29,7 @@ exports.run = async (client, message, args) => {
                 {name: 'Permissão:', value: 'Administradores'},
                 {name: 'Como usar:', value: `\`\`\`bash\n${config.prefix}${exports.help.name} <@pessoa OU id-da-pessoa>\n\`\`\``},
             )
-            .setFooter({text: message.guild.name})
+            .setFooter({text:`${message.guild.name} - Tudo sobre Sky`});
         const msg = args.slice(1).join(" ");    
         if (hasHelperFlag || !msg) {
             await message.reply({embeds: [embedHelper], ephemeral: true});
