@@ -8,7 +8,8 @@ const getID = require('../funcoes/ids.json');
 const config = require("../config.json");
 
 exports.help = {
-    name: "desmutar"
+    name: "desmutar",
+    isRestricted: true,
 }
 
 exports.run = async (client, message, args) => {

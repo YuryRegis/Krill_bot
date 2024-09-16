@@ -7,7 +7,8 @@ const {run: logError} = require('../funcoes/errorHandler');
 
 
 exports.help = {
-    name: "del"
+    name: "del",
+    isRestricted: true,
 }
 //comando para apagar multiplas mensagens
 exports.run = async (client, message, args) => {

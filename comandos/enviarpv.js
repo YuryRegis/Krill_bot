@@ -3,7 +3,8 @@ const { verificaRoles } = require('../funcoes/roles'),
 
 
 exports.help = {
-    name: "enviarpv"
+    name: "enviarpv",
+    isRestricted: true,
 }
 
 exports.run = async (client, message, args) => {

@@ -143,5 +143,6 @@ exports.run = async (client, message, args) => {
 }
 
 exports.help = {
-    name: "denuncia"
+    name: "denuncia",
+    isRestricted: false,
 }

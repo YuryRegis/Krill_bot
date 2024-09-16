@@ -7,7 +7,8 @@ const {run: errorLog} = require('../funcoes/errorHandler');
 const config = require("../config.json");
 
 exports.help = {
-    name: "mutar"
+    name: "mutar",
+    isRestricted: true,
 }
 
 exports.run = async (client, message, args) => {

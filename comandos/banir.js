@@ -10,7 +10,8 @@ const { verificaRole }  = require('../funcoes/roles'),
 
 
 exports.help = {
-    name: "banir"
+    name: "banir",
+    isRestricted: true,
 }
 
 

@@ -8,7 +8,8 @@ const { MessageEmbed, MessageCollector } = require('discord.js'),
     getID = require('../funcoes/ids.json');
 
 exports.help = {
-    name: "enviarmsg"
+    name: "enviarmsg",
+    isRestricted: true,
 }
 
 exports.run = async (client, message, args) => {

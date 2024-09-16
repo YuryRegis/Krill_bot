@@ -7,6 +7,7 @@
     }
 
     exports.help = {
-        name: "kping"
+        name: "kping",
+        isRestricted: false,
     }
     

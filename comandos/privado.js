@@ -55,7 +55,8 @@ async function listeningMessage (client, sala, mensagem) {
 }
 
 exports.help = {
-    name: "privado"
+    name: "privado",
+    isRestricted: false,
 }
 
 exports.run = async (client, message, args) => {
