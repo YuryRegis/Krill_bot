@@ -6,8 +6,7 @@ const client = new Discord.Client({intents: [53608447]});
 const getID = require('./funcoes/ids.json');
 const {run: errorLog} = require('./funcoes/errorHandler');
 const config = require("./config.json");
-const { MessageEmbed } = require("discord.js");
-const { verificaRoles } = require('./funcoes/roles'); 
+const { verificaRoles } = require('./funcoes/roles')
 const messageHandler = require("./messageHandler.cjs");
 const {run: interactionHandler} = require("./interactionHandler.cjs");
 const {run: buttonHandler} = require("./buttonHandler.cjs");
@@ -166,47 +165,55 @@ client.on("messageCreate", async message => {
 	try {
 		// verifica se é uma mensagem do bot
 		if (message.author.bot) return;
+		
+		//ignora mensagens diretas
+		if(message.channel.type === "dm") return; 
 
 		// console.log('MENSAGEM >>>>', message);
-		let bemVindo = getID.sala.BEMVINDO,
-			mais18   = getID.sala.MAIS18,
+		let mais18   = getID.sala.MAIS18,
 			salatual = message.channel.id,
 			mbr      = message.member;
-		// console.log('MBR >>>>', mbr);
+		
 		if(salatual !== mais18) {
 			const palavroes = await verificaPalavrao(message);
-			const permissao = false;//await verificaRoles(mbr, [getID.cargo.ADMIN,getID.cargo.STAFF,getID.cargo.MODERADOR]);
-			console.log('EVIDENCIA >>>>', {palavroes, permissao});
+			const permissao = await verificaRoles(mbr, [getID.cargo.ADMIN,getID.cargo.STAFF,getID.cargo.MODERADOR]);
+			
 			if(palavroes && !permissao) {
 				let salaAviso = await message.guild.channels.cache.get(getID.sala.LOGS),
 					origem    = await message.guild.channels.cache.get(salatual);
-					
-				message.delete();
 
 				salaAviso.send(`Detectei uma palavra de baixo calão ou na sala ${origem}\`\`\`
 	Autor:     ${mbr.user.tag} (${mbr.user.username})
 	Detectado: ${palavroes}
 	Conteúdo:  ${message.toString()}\`\`\``);
 
-				const embed = new MessageEmbed()
-					.setTitle('SEM CONTEÚDO INAPROPRIADO (NSFW E OUTROS)')
-					.addField(`Sua mensagem foi bloqueada por conteúdo inapropriado. Caso não seja um palavrão, reporte para a moderação na categoria de Suporte.\nPor favor, verifique novamente nossas https://discord.com/channels/603720312911167622/603728556262031365`)	
-					.setDescription('Sky trata-se de um jogo para toda a família. Pedimos que você filtre todos os tópicos obscenos e adultos neste espaço compartilhado da comunidade. Observe que isso inclui nomes de usuários e escolhas de avatar.')
+				const embed = new Discord.EmbedBuilder()
 					.setColor("#237feb")
-					.setFooter(`Requisitado por ${message.member.user.username}`, client.user.displayAvatarURL)
-					.setTimestamp()
-				const reply = await message.channel.send(embed);
+					.setTitle('SEM CONTEÚDO INAPROPRIADO (NSFW E OUTROS)')
+					.setThumbnail('https://i.ibb.co/6RKGTjC/LogoTSGB.png')
+					.setDescription('Sky trata-se de um jogo para toda a família. Pedimos que você filtre todos os tópicos obscenos e adultos neste espaço compartilhado da comunidade. Observe que isso inclui nomes de usuários e escolhas de avatar.')
+					.addFields(
+						{
+							name: 'Atenção',
+							value: `Sua mensagem foi bloqueada por conteúdo inapropriado.` 
+						},
+						{
+							name: 'Observação',
+							value: `Caso não seja um palavrão, reporte para a nossa equipe abrindo um Ticket usando o comando \`/Ticket\` ou \`!privado\`.\n\nPor favor, verifique novamente nossas https://discord.com/channels/603720312911167622/603728556262031365`
+						}
+					).setFooter({text:`${message.guild.name} - Tudo sobre Sky`});
+				
+				const reply = await message.reply({embeds: [embed]});
+				await message.delete();
 				setTimeout(() => {
 					reply.delete();
 				}, 300000);
 				return;
 			}
 		}
-
-		if(message.channel.type === "dm") return; //ignora mensagens diretas
 		
 		messageHandler.run(message, queue, client);
-		return undefined;
+		return;
 	} catch (error) {
 		errorLog({message: 'MESSAGE_HANDLER_ERROR:', client, error});
 	}
